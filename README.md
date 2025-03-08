@@ -1,10 +1,6 @@
-# Clube de Malha Itajubá
-
-Este projeto consiste no desenvolvimento de um site para o **Clube de Malha Itajubá**, como parte das atividades de **extensão universitária** do curso de **Análise e Desenvolvimento de Sistemas** da **Universidade Cruzeiro do Sul**.
-
 ## 📌 Objetivo
 
-O objetivo principal deste projeto é fornecer uma **plataforma digital** para o Clube de Malha Itajubá. 
+Este projeto consiste no desenvolvimento de uma **plataforma digital** para o **Clube de Malha Itajubá**, como parte das atividades de **extensão universitária** do curso de **Análise e Desenvolvimento de Sistemas** da **Universidade Cruzeiro do Sul**. 
 
 ## 🚀 Funcionalidades
 
