@@ -6,11 +6,7 @@ Este projeto consiste no desenvolvimento de um site para o **Clube de Malha Itaj
 
 ## 📌 Objetivo
 
-O objetivo principal deste projeto é fornecer uma **plataforma digital** para o Clube de Malha Itajubá, permitindo a gestão eficiente de informações, como:  
-✅ **Calendário de eventos**  
-✅ **Resultados de partidas**  
-✅ **Notícias relacionadas ao clube**  
-
+O objetivo principal deste projeto é fornecer uma **plataforma digital** para o Clube de Malha Itajubá. 
 
 ## 🛠 Tecnologias Utilizadas
 
@@ -21,7 +17,9 @@ O objetivo principal deste projeto é fornecer uma **plataforma digital** para o
 ## 🚀 Funcionalidades
 
 ✅ **Gestão de Eventos** → Cadastro e visualização de eventos do clube.
-✅ **Resultados de Partidas** → Registro e consulta de resultados de jogos.  
+
+✅ **Resultados de Partidas** → Registro e consulta de resultados de jogos.
+
 ✅ **Notícias** → Publicação de notícias e atualizações relacionadas ao clube.  
  
 ## 📂 Estrutura do Projeto
