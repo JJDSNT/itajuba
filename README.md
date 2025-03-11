@@ -16,8 +16,8 @@ Este projeto consiste no desenvolvimento de uma **plataforma digital** para o **
 - **PWA** → Permitindo acesso direto em dispositivos móveis.
 - **Autenticação** → Implementada utilizando o **Google Firebase** e **Google SSO** para autenticação segura.    
 - **Backend** → Baseado no **Google Sheets**, onde os dados são armazenados e manipulados.
-- **Integração com Google Calendar ou com o Calendário do Facebook** → Sincronização de eventos diretamente na agenda do clube.
-- **Integração com Facebook** → Exibição automática das últimas notícias do clube através do feed do grupo oficial no Facebook.
+- (talvez) **Integração com Google Calendar ou com o Calendário do Facebook** → Sincronização de eventos diretamente na agenda do clube.
+- (talvez) **Integração com Facebook** → Exibição automática das últimas notícias do clube através do feed do grupo oficial no Facebook.
 
 
 ## 🔧 Configuração e Execução
