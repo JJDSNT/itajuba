@@ -1,59 +1,23 @@
-# Itajuba
+## 📌 Objetivo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.8.
+Este projeto consiste no desenvolvimento de uma **plataforma digital** para o **Clube de Malha Itajubá**, como parte das atividades de **extensão universitária** do curso de **Análise e Desenvolvimento de Sistemas** da **Universidade Cruzeiro do Sul**. 
 
-## Development server
+## 🚀 Funcionalidades
 
-To start a local development server, run:
+✅ **Resultados de Partidas** → Registro e consulta de resultados de jogos.
 
-```bash
-ng serve
-```
+  Acompanhamento das partidas dos campeonatos, as que vão ser realizadas e o resultado das que já ocorreram.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 🛠 Tecnologias Utilizadas
 
-## Code scaffolding
+- **Frontend** → Desenvolvido em **Angular**, responsável pela interface do usuário e comunicação com o backend.
+- **PWA** → Permitindo acesso direto em dispositivos móveis.   
+- **Backend** → Baseado no **Google Sheets**, onde os dados são armazenados e manipulados.
+- (talvez) **Integração com Google Calendar ou com o Calendário do Facebook** → Sincronização de eventos diretamente na agenda do clube.
+- (talvez) **Integração com Facebook** → Exibição automática das últimas notícias do clube através do feed do grupo oficial no Facebook.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
+## 🔧 Configuração e Execução
+- Hospedagem direta na vercel ou na netfly, utilizando variaveis de ambiente para definir o endereço da planilha com os dados.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
