@@ -1,0 +1,9 @@
+<section *ngIf="partidasAgendadas.length > 0">
+  <h2>Próximas partidas</h2>
+  <app-partida-card *ngFor="let p of partidasAgendadas" [partida]="p" />
+</section>
+
+<section *ngIf="partidasEncerradas.length > 0">
+  <h2>Resultados recentes</h2>
+  <app-partida-card *ngFor="let p of partidasEncerradas" [partida]="p" />
+</section>
