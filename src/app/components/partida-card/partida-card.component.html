@@ -1,0 +1,20 @@
+<div class="partida-card">
+  <div class="info">
+    <strong>{{ partida.data | date : "shortDate" }}</strong> –
+    {{ partida.local }}
+  </div>
+
+  <ng-container *ngIf="ehEncerrada; else agendada">
+    <div class="resultado">
+      {{ partida.resultado?.clubeCasa }} {{ partida.resultado?.pontosCasa }}
+      x
+      {{ partida.resultado?.pontosVisitante }}
+      {{ partida.resultado?.clubeVisitante }}
+    </div>
+    <div class="vencedor">Vencedor: {{ vencedor }}</div>
+  </ng-container>
+
+  <ng-template #agendada>
+    <div class="status">⏳ Partida agendada</div>
+  </ng-template>
+</div>
