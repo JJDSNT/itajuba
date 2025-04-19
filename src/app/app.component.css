@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  .site-header,
+  .site-footer {
+    width: 100%;
+  }
+  
+  .site-title {
+    margin: 0;
+  }
+  
+  .site-nav {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .site-nav a {
+    transition: opacity 0.2s ease-in-out;
+  }
+  .site-nav a:hover {
+    opacity: 0.8;
+  }
+  
+  .site-main {
+    padding-top: 2rem;
+  }
+  

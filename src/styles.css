@@ -1,1 +1,79 @@
-/* You can add global styles to this file, and also import other style files */
+/* ====== CSS RESET (inspirado em Josh Comeau) ====== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove estilo padrão de links, listas e botões */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+ul,
+ol {
+  list-style: none;
+}
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+/* Torna o layout mais previsível e fluido */
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Para acessibilidade e foco visível */
+:focus-visible {
+  outline: 2px dashed #007acc;
+  outline-offset: 2px;
+}
+
+/* Imagens responsivas */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Formulários */
+input,
+textarea,
+select {
+  font: inherit;
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  border-radius: 4px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #007acc;
+  outline: none;
+}
+
+/* Container padrão (ajustável por breakpoint no CSS/SCSS se desejar) */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
