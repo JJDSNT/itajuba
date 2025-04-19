@@ -1,0 +1,23 @@
+<section class="situacao-campeonato">
+  <h2>Situação do Campeonato</h2>
+  <table class="tabela-classificacao" *ngIf="classificacao.length">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Clube</th>
+        <th>Pts</th>
+        <th>Vitórias</th>
+        <th>Derrotas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of classificacao; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ c.nome }}</td>
+        <td>{{ c.pontos }}</td>
+        <td>{{ c.vitorias }}</td>
+        <td>{{ c.derrotas }}</td>
+      </tr>
+    </tbody>
+  </table>
+</section>

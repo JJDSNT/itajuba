@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PartidaModel } from '../../models/partida.model';
+import { PartidaModel } from '../../models/campeonato.model';
 import { CommonModule } from '@angular/common';
 import { PartidaCardComponent } from '../partida-card/partida-card.component';
 

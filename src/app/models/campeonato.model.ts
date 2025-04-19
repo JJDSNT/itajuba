@@ -1,3 +1,10 @@
+export interface ClubeClassificacao {
+  nome: string;
+  pontos: number;
+  vitorias: number;
+  derrotas: number;
+}
+
 export type PartidaStatus = 'agendada' | 'encerrada';
 
 export interface ResultadoPartida {

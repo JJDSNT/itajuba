@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { PartidaModel } from '../models/partida.model';
+import { PartidaModel } from '../models/campeonato.model';
 
 @Injectable({
   providedIn: 'root',
