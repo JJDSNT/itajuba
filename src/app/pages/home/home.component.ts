@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { PartidaService } from '../../services/partida.service';
-import { PartidaModel,ClubeClassificacao } from '../../models/campeonato.model';
+import { CampeonatoService } from '../../services/campeonato.service';
+import {
+  PartidaModel,
+  ClubeClassificacao,
+} from '../../models/campeonato.model';
 import { PartidasListComponent } from '../../components/partidas-list/partidas-list.component';
 import { ClassificacaoComponent } from '../../components/classificacao/classificacao.component';
 
@@ -10,18 +13,13 @@ import { ClassificacaoComponent } from '../../components/classificacao/classific
   imports: [PartidasListComponent, ClassificacaoComponent],
 })
 export class HomeComponent implements OnInit {
+  classificacao: ClubeClassificacao[] = [];
   partidas: PartidaModel[] = [];
 
-  constructor(private partidaService: PartidaService) {}
+  constructor(private campeonatoService: CampeonatoService) {}
 
   ngOnInit(): void {
-    this.partidaService.getPartidas().subscribe((data) => {
-      this.partidas = data;
-    });
+    this.campeonatoService.getPartidas().subscribe(p => this.partidas = p);
+    this.campeonatoService.getClassificacao().subscribe(c => this.classificacao = c);
   }
-  classificacao: ClubeClassificacao[] = [
-    { nome: 'Itajubá', pontos: 6, vitorias: 2, derrotas: 0 },
-    { nome: 'Mooca', pontos: 3, vitorias: 1, derrotas: 1 },
-    { nome: 'Centro', pontos: 0, vitorias: 0, derrotas: 2 },
-  ];
 }
