@@ -1,9 +1,17 @@
-<section *ngIf="partidasAgendadas.length > 0">
-  <h2>Próximas partidas</h2>
-  <app-partida-card *ngFor="let p of partidasAgendadas" [partida]="p" />
-</section>
+<section class="grid-duas-colunas">
+  <div class="coluna">
+    <h2>Resultados Recentes</h2>
+    <app-partida-card
+      *ngFor="let p of partidasEncerradas"
+      [partida]="p"
+    ></app-partida-card>
+  </div>
 
-<section *ngIf="partidasEncerradas.length > 0">
-  <h2>Resultados recentes</h2>
-  <app-partida-card *ngFor="let p of partidasEncerradas" [partida]="p" />
+  <div class="coluna">
+    <h2>Próximas Partidas</h2>
+    <app-partida-card
+      *ngFor="let p of partidasAgendadas"
+      [partida]="p"
+    ></app-partida-card>
+  </div>
 </section>

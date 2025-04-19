@@ -6,3 +6,22 @@ h2 {
   font-size: 1.25rem;
   margin-bottom: 1rem;
 }
+
+.grid-duas-colunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.coluna {
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .grid-duas-colunas {
+    grid-template-columns: 1fr;
+  }
+}
