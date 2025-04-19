@@ -1,6 +1,9 @@
 <header class="site-header">
-  <div class="container">
-    <h1 class="site-title">Minha Aplicação Angular</h1>
+  <div class="container header-inner">
+    <a href="/" class="brand">
+      <img src="escudo.png" alt="Escudo do CMI">
+      <h1 class="site-title">CMI</h1>
+    </a>
     <nav class="site-nav">
       <a routerLink="/" routerLinkActive="active">Início</a>
       <a routerLink="/sobre" routerLinkActive="active">Sobre</a>
@@ -9,12 +12,14 @@
   </div>
 </header>
 
-<main class="site-main container">
-  <router-outlet></router-outlet>
+<main class="site-main">
+  <div class="container">
+    <router-outlet></router-outlet>
+  </div>
 </main>
 
 <footer class="site-footer">
   <div class="container">
-    <p>&copy; 2025 Minha Aplicação. Todos os direitos reservados.</p>
+    <p>&copy; 2025 Clube de Malha Itajubá. Todos os direitos reservados.</p>
   </div>
 </footer>
