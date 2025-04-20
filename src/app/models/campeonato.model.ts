@@ -16,7 +16,8 @@ export interface ResultadoPartida {
 
 export interface PartidaModel {
   id: string;
-  data: string; // ou Date
+  data: string; // formato ISO: '2025-04-20' → usado para ordenação/lógica
+  dataFormatada: string; // formato exibido: '20/04/25' → usado no template
   local: string;
   status: PartidaStatus;
   resultado?: ResultadoPartida;

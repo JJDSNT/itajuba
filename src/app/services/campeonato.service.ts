@@ -40,6 +40,9 @@ export class CampeonatoService {
               const campoNeutro = row['Campo Neutro?']?.trim();
               const local = campoNeutro ? campoNeutro : row['Clube Mandante'];
 
+              const dataISO = this.toISODate(row['Data']);
+              const dataFormatada = this.toFormattedDate(row['Data']);
+
               // 🔍 Log para debug
               console.log({
                 linha: index + 1,
@@ -56,7 +59,8 @@ export class CampeonatoService {
 
               return {
                 id: String(index + 1).padStart(3, '0'),
-                data: this.formatData(row['Data']),
+                data: dataISO,
+                dataFormatada,
                 local,
                 status,
                 resultado: encerrada
@@ -112,8 +116,14 @@ export class CampeonatoService {
     );
   }
 
-  private formatData(input: string): string {
+
+  private toISODate(input: string): string {
     const [dia, mes] = input.split('/');
     return `2025-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+  }
+
+  private toFormattedDate(input: string): string {
+    const [dia, mes] = input.split('/');
+    return `${dia.padStart(2, '0')}/${mes.padStart(2, '0')}/25`;
   }
 }
