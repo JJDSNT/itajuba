@@ -43,19 +43,6 @@ export class CampeonatoService {
               const dataISO = this.toISODate(row['Data']);
               const dataFormatada = this.toFormattedDate(row['Data']);
 
-              // 🔍 Log para debug
-              console.log({
-                linha: index + 1,
-                data: row['Data'],
-                mandante: row['Clube Mandante'],
-                visitante: row['Clube Visitante'],
-                pontosMandante: pontosMandanteRaw,
-                pontosVisitante: pontosVisitanteRaw,
-                isWO,
-                encerrada,
-                status,
-                local,
-              });
 
               return {
                 id: String(index + 1).padStart(3, '0'),
@@ -63,6 +50,8 @@ export class CampeonatoService {
                 dataFormatada,
                 local,
                 status,
+                clubeMandante: row['Clube Mandante'],
+                clubeVisitante: row['Clube Visitante'],
                 resultado: (encerrada || isWO)
                 ? {
                     clubeCasa: row['Clube Mandante'],

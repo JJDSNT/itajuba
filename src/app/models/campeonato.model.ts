@@ -20,5 +20,7 @@ export interface PartidaModel {
   dataFormatada: string; // formato exibido: '20/04/25' → usado no template
   local: string;
   status: PartidaStatus;
+  clubeMandante: string;
+  clubeVisitante: string;
   resultado?: ResultadoPartida;
 }
