@@ -84,39 +84,38 @@ export class CampeonatoService {
     return this.getPartidas().pipe(
       map((partidas) => {
         const ranking: Record<string, ClubeClassificacao> = {};
-
+  
         for (const partida of partidas) {
           if (!partida.resultado) continue;
-
-          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } =
-            partida.resultado;
-
-          if (!ranking[clubeCasa]) {
-            ranking[clubeCasa] = {
-              nome: clubeCasa,
-              pontos: 0,
-              vitorias: 0,
-              derrotas: 0,
-            };
+  
+          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } = partida.resultado;
+  
+          for (const nome of [clubeCasa, clubeVisitante]) {
+            if (!ranking[nome]) {
+              ranking[nome] = { nome, pontos: 0, vitorias: 0, derrotas: 0 };
+            }
           }
-
-          if (!ranking[clubeVisitante]) {
-            ranking[clubeVisitante] = {
-              nome: clubeVisitante,
-              pontos: 0,
-              vitorias: 0,
-              derrotas: 0,
-            };
-          }
-
+  
+          // Soma os pontos
           ranking[clubeCasa].pontos += pontosCasa;
           ranking[clubeVisitante].pontos += pontosVisitante;
+  
+          // Determina vitória e derrota (desempate, apenas informativo)
+          if (pontosCasa > pontosVisitante) {
+            ranking[clubeCasa].vitorias += 1;
+            ranking[clubeVisitante].derrotas += 1;
+          } else if (pontosVisitante > pontosCasa) {
+            ranking[clubeVisitante].vitorias += 1;
+            ranking[clubeCasa].derrotas += 1;
+          }
+          // empates não contam como vitória ou derrota
         }
-
+  
         return Object.values(ranking).sort((a, b) => b.pontos - a.pontos);
       })
     );
   }
+  
 
   private toISODate(input: string): string {
     const [dia, mes] = input.split('/');
