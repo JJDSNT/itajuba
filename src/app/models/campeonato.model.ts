@@ -5,7 +5,7 @@ export interface ClubeClassificacao {
   derrotas: number;
 }
 
-export type PartidaStatus = 'agendada' | 'encerrada';
+export type PartidaStatus = 'agendada' | 'encerrada' | 'wo';
 
 export interface ResultadoPartida {
   clubeCasa: string;
