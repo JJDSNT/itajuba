@@ -5,70 +5,15 @@
   color: #333;
 }
 
-/* Cabeçalho e rodapé ocupando largura total */
-.site-header,
-.site-footer {
-  width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  padding: 1rem 0;
-}
-
-/* Container centralizado com espaçamento */
-.container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Logo + título juntos */
-.brand {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-}
-
-.brand img {
-  height: 40px;
-  width: auto;
-  margin-right: 0.5rem;
-}
-
-.site-title {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-/* Navegação */
-.site-nav {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.site-nav a {
-  transition: opacity 0.2s ease-in-out;
-  text-decoration: none;
-  color: inherit;
-}
-
-.site-nav a:hover {
-  opacity: 0.8;
-}
-
-.site-nav a.active {
-  font-weight: bold;
-  color: #1976d2;
-}
-
 /* Conteúdo principal */
 .site-main {
   padding-top: 2rem;
+}
+
+/* Rodapé (se existir) */
+.site-footer {
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  padding: 1rem 0;
 }

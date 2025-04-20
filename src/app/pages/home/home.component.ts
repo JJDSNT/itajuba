@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   classificacao: ClubeClassificacao[] = [];
   partidas: PartidaModel[] = [];
 
-  constructor(private campeonatoService: CampeonatoService) {}
+  constructor(private readonly campeonatoService: CampeonatoService) {}
 
   ngOnInit(): void {
     this.campeonatoService.getPartidas().subscribe(p => this.partidas = p);
