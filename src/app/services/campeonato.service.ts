@@ -32,7 +32,8 @@ export class CampeonatoService {
 
             const pontosMandanteRaw = row['Pontos Mandante']?.trim();
             const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
-            const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
+            const encerrada =
+              pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
 
             const pontosMandante = Number(pontosMandanteRaw);
             const pontosVisitante = Number(pontosVisitanteRaw);
@@ -60,14 +61,15 @@ export class CampeonatoService {
               status,
               clubeMandante: row['Clube Mandante'],
               clubeVisitante: row['Clube Visitante'],
-              resultado: (encerrada || isWO)
-                ? {
-                    clubeCasa: row['Clube Mandante'],
-                    pontosCasa: pontosMandante,
-                    clubeVisitante: row['Clube Visitante'],
-                    pontosVisitante: pontosVisitante,
-                  }
-                : undefined,
+              resultado:
+                encerrada || isWO
+                  ? {
+                      clubeCasa: row['Clube Mandante'],
+                      pontosCasa: pontosMandante,
+                      clubeVisitante: row['Clube Visitante'],
+                      pontosVisitante: pontosVisitante,
+                    }
+                  : undefined,
             };
           }
         );
@@ -97,14 +99,27 @@ export class CampeonatoService {
             }
           }
 
-          if (pontosCasa > pontosVisitante) {
+          if (pontosCasa === pontosVisitante) {
+            // empate
+            ranking[clubeCasa].pontos += 1;
+            ranking[clubeVisitante].pontos += 2;
+          } else if (pontosCasa >= 100) {
+            // vitória do mandante com 100+
             ranking[clubeCasa].pontos += 3;
             ranking[clubeCasa].vitorias += 1;
             ranking[clubeVisitante].derrotas += 1;
-          } else if (pontosVisitante > pontosCasa) {
-            ranking[clubeVisitante].pontos += 3;
-            ranking[clubeVisitante].vitorias += 1;
-            ranking[clubeCasa].derrotas += 1;
+          } else {
+            // vitória do visitante (menos de 100 do mandante)
+            ranking[clubeCasa].pontos += 2;
+            ranking[clubeVisitante].pontos += 1;
+
+            if (pontosCasa > pontosVisitante) {
+              ranking[clubeCasa].vitorias += 1;
+              ranking[clubeVisitante].derrotas += 1;
+            } else {
+              ranking[clubeVisitante].vitorias += 1;
+              ranking[clubeCasa].derrotas += 1;
+            }
           }
         }
 
