@@ -85,42 +85,32 @@ export class CampeonatoService {
       map((partidas) => {
         const ranking: Record<string, ClubeClassificacao> = {};
 
-        const encerradas = partidas.filter(
-          (p) => p.status === 'encerrada' && p.resultado
-        );
+        for (const partida of partidas) {
+          if (!partida.resultado) continue;
 
-        for (const partida of encerradas) {
-          const { clubeCasa, clubeVisitante, pontosCasa, pontosVisitante } =
-            partida.resultado!;
+          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } =
+            partida.resultado;
 
-          for (const nome of [clubeCasa, clubeVisitante]) {
-            if (!ranking[nome]) {
-              ranking[nome] = { nome, pontos: 0, vitorias: 0, derrotas: 0 };
-            }
+          if (!ranking[clubeCasa]) {
+            ranking[clubeCasa] = {
+              nome: clubeCasa,
+              pontos: 0,
+              vitorias: 0,
+              derrotas: 0,
+            };
           }
 
-          if (pontosCasa === pontosVisitante) {
-            // empate
-            ranking[clubeCasa].pontos += 1;
-            ranking[clubeVisitante].pontos += 2;
-          } else if (pontosCasa >= 100) {
-            // vitória do mandante com 100+
-            ranking[clubeCasa].pontos += 3;
-            ranking[clubeCasa].vitorias += 1;
-            ranking[clubeVisitante].derrotas += 1;
-          } else {
-            // vitória do visitante (menos de 100 do mandante)
-            ranking[clubeCasa].pontos += 2;
-            ranking[clubeVisitante].pontos += 1;
-
-            if (pontosCasa > pontosVisitante) {
-              ranking[clubeCasa].vitorias += 1;
-              ranking[clubeVisitante].derrotas += 1;
-            } else {
-              ranking[clubeVisitante].vitorias += 1;
-              ranking[clubeCasa].derrotas += 1;
-            }
+          if (!ranking[clubeVisitante]) {
+            ranking[clubeVisitante] = {
+              nome: clubeVisitante,
+              pontos: 0,
+              vitorias: 0,
+              derrotas: 0,
+            };
           }
+
+          ranking[clubeCasa].pontos += pontosCasa;
+          ranking[clubeVisitante].pontos += pontosVisitante;
         }
 
         return Object.values(ranking).sort((a, b) => b.pontos - a.pontos);
