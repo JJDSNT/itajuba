@@ -13,11 +13,12 @@ export class PartidasListComponent {
   @Input() partidas: PartidaModel[] = [];
   @Input() quantidade: number = 3; // 🔧 futuro: ajustar dinamicamente
 
-  private ordenarPorData(partidas: PartidaModel[], crescente: boolean): PartidaModel[] {
+  private ordenarPorData(
+    partidas: PartidaModel[],
+    crescente: boolean
+  ): PartidaModel[] {
     return [...partidas].sort((a, b) =>
-      crescente
-        ? a.data.localeCompare(b.data)
-        : b.data.localeCompare(a.data)
+      crescente ? a.data.localeCompare(b.data) : b.data.localeCompare(a.data)
     );
   }
 
@@ -29,9 +30,9 @@ export class PartidasListComponent {
   }
 
   get partidasEncerradas(): PartidaModel[] {
-    return this.ordenarPorData(
-      this.partidas.filter((p) => p.status === 'encerrada'),
-      false
-    ).slice(0, this.quantidade);
+    return this.partidas
+      .filter((p) => p.status === 'encerrada' || p.status === 'wo')
+      .sort((a, b) => b.data.localeCompare(a.data))
+      .slice(0, this.quantidade); // ou 3 diretamente se preferir
   }
 }

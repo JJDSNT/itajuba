@@ -63,14 +63,14 @@ export class CampeonatoService {
                 dataFormatada,
                 local,
                 status,
-                resultado: encerrada
-                  ? {
-                      clubeCasa: row['Clube Mandante'],
-                      pontosCasa: pontosMandante,
-                      clubeVisitante: row['Clube Visitante'],
-                      pontosVisitante: pontosVisitante,
-                    }
-                  : undefined,
+                resultado: (encerrada || isWO)
+                ? {
+                    clubeCasa: row['Clube Mandante'],
+                    pontosCasa: pontosMandante,
+                    clubeVisitante: row['Clube Visitante'],
+                    pontosVisitante: pontosVisitante,
+                  }
+                : undefined,
               };
             }
           );

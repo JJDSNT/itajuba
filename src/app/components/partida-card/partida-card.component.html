@@ -4,14 +4,17 @@
     {{ partida.local }}
   </div>
 
-  <ng-container *ngIf="ehEncerrada; else agendada">
+  <ng-container *ngIf="ehExibivel; else agendada">
     <div class="resultado">
-      {{ partida.resultado?.clubeCasa }} {{ partida.resultado?.pontosCasa }}
+      {{ partida.resultado!.clubeCasa }} {{ partida.resultado!.pontosCasa }}
       x
-      {{ partida.resultado?.pontosVisitante }}
-      {{ partida.resultado?.clubeVisitante }}
+      {{ partida.resultado!.pontosVisitante }}
+      {{ partida.resultado!.clubeVisitante }}
     </div>
-    <div class="vencedor">Vencedor: {{ vencedor }}</div>
+    <div class="vencedor">
+      Vencedor: {{ vencedor }}
+      <span *ngIf="ehWO">(W.O.)</span>
+    </div>
   </ng-container>
 
   <ng-template #agendada>
