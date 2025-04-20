@@ -5,18 +5,33 @@ import { PartidaCardComponent } from '../partida-card/partida-card.component';
 
 @Component({
   selector: 'app-partidas-list',
-  imports: [CommonModule,PartidaCardComponent],
+  imports: [CommonModule, PartidaCardComponent],
   templateUrl: './partidas-list.component.html',
   styleUrls: ['./partidas-list.component.css'],
 })
 export class PartidasListComponent {
   @Input() partidas: PartidaModel[] = [];
+  @Input() quantidade: number = 3; // 🔧 futuro: ajustar dinamicamente
+
+  private ordenarPorData(partidas: PartidaModel[], crescente: boolean): PartidaModel[] {
+    return [...partidas].sort((a, b) =>
+      crescente
+        ? a.data.localeCompare(b.data)
+        : b.data.localeCompare(a.data)
+    );
+  }
 
   get partidasAgendadas(): PartidaModel[] {
-    return this.partidas.filter((p) => p.status === 'agendada');
+    return this.ordenarPorData(
+      this.partidas.filter((p) => p.status === 'agendada'),
+      true
+    ).slice(0, this.quantidade);
   }
 
   get partidasEncerradas(): PartidaModel[] {
-    return this.partidas.filter((p) => p.status === 'encerrada');
+    return this.ordenarPorData(
+      this.partidas.filter((p) => p.status === 'encerrada'),
+      false
+    ).slice(0, this.quantidade);
   }
 }
