@@ -1,13 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { PartidaModel, Rodada } from '../../models/campeonato.model';
 import { CommonModule } from '@angular/common';
-import { PartidaCardComponent } from '../partida-card/partida-card.component';
 import { RodadaComponent } from '../rodada/rodada.component';
 
 @Component({
   selector: 'app-partidas-list',
   standalone: true,
-  imports: [CommonModule, PartidaCardComponent, RodadaComponent],
+  imports: [CommonModule, RodadaComponent],
   templateUrl: './partidas-list.component.html',
   styleUrls: ['./partidas-list.component.css'],
 })
