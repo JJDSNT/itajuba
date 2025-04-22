@@ -1,0 +1,11 @@
+<!-- rodada.component.html -->
+<div class="rodada-box">
+  <button (click)="expandido = !expandido">
+    <strong>🗓 Rodada: {{ dataFormatada }}</strong>
+    <span style="margin-left: 0.5rem">{{ expandido ? "▲" : "▼" }}</span>
+  </button>
+
+  <div *ngIf="expandido">
+    <app-jogo-rodada-card *ngFor="let jogo of jogos" [jogo]="jogo" />
+  </div>
+</div>

@@ -1,0 +1,26 @@
+.rodada-box {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #f9f9f9;
+}
+
+.botao-toggle {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.jogos {
+  margin-top: 0.5rem;
+}
+
+.jogo {
+  padding: 0.25rem 0;
+  font-family: monospace;
+}

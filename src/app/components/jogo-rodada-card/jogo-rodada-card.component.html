@@ -1,0 +1,23 @@
+<div class="partida-card">
+  <div class="info">
+    📍 <strong>{{ jogo.local }}</strong>
+  </div>
+
+  <ng-container *ngIf="jogo.pontosMandante != null && jogo.pontosVisitante != null; else agendada">
+    <div class="resultado">
+      {{ jogo.mandante }} {{ jogo.pontosMandante }} x {{ jogo.pontosVisitante }} {{ jogo.visitante }}
+    </div>
+    <div class="vencedor">
+      Vencedor: {{ vencedorSimples }}
+      <span *ngIf="jogo.status === 'wo'">(W.O.)</span>
+      <span *ngIf="jogo.status !== 'wo'">({{ pontosTextoSimples }})</span>
+    </div>
+  </ng-container>
+
+  <ng-template #agendada>
+    <div class="resultado">
+      {{ jogo.mandante }} x {{ jogo.visitante }}
+    </div>
+    <div class="status">⏳ Aguardando resultado</div>
+  </ng-template>
+</div>
