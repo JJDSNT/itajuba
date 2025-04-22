@@ -14,8 +14,7 @@ import {
 })
 export class CampeonatoService {
   private readonly csvUrl =
-    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0}';
-
+    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0';
   private readonly clubesUrl =
     'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&gid=29461594';
 
