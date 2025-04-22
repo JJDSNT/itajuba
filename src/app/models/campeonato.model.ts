@@ -1,9 +1,15 @@
+export interface ClubeInfo {
+  nome: string;
+  endereco: string;
+}
+
 // 🏆 Classificação de clubes
 export interface ClubeClassificacao {
   nome: string;
   pontos: number;
   vitorias: number;
   derrotas: number;
+  endereco?: string;
 }
 
 // 📊 Status possível de uma partida

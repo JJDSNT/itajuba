@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay } from 'rxjs';
+import { map, Observable, shareReplay, switchAll } from 'rxjs';
 import * as Papa from 'papaparse';
-import { PartidaModel, ClubeClassificacao, Rodada } from '../models/campeonato.model';
+import {
+  ClubeInfo,
+  PartidaModel,
+  ClubeClassificacao,
+  Rodada,
+} from '../models/campeonato.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +16,30 @@ export class CampeonatoService {
   private readonly csvUrl =
     'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0';
 
+  private readonly clubesUrl =
+    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&gid=29461594';
+
   private readonly csv$: Observable<string>;
 
   constructor(private readonly http: HttpClient) {
-    this.csv$ = this.http.get(this.csvUrl, { responseType: 'text' }).pipe(shareReplay(1));
+    this.csv$ = this.http
+      .get(this.csvUrl, { responseType: 'text' })
+      .pipe(shareReplay(1));
+  }
+
+  getClubes(): Observable<ClubeInfo[]> {
+    return this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
+      map((csv) => {
+        const parsed = Papa.parse(csv, { header: true });
+        return (parsed.data as any[])
+          .map((row) => ({
+            nome: row['Clube']?.trim(),
+            endereco: row['Endereço']?.trim(),
+          }))
+          .filter((c) => c.nome && c.endereco);
+      }),
+      shareReplay(1)
+    );
   }
 
   getRodadas(): Observable<Rodada[]> {
@@ -53,52 +78,55 @@ export class CampeonatoService {
       this.csv$.subscribe((csvData) => {
         const parsed = Papa.parse(csvData, { header: true });
 
-        const partidas: PartidaModel[] = parsed.data.map((row: any, index: number) => {
-          const isWO =
-            row['WO Mandante']?.toUpperCase() === 'WO' ||
-            row['WO visitante']?.toUpperCase() === 'WO';
+        const partidas: PartidaModel[] = parsed.data.map(
+          (row: any, index: number) => {
+            const isWO =
+              row['WO Mandante']?.toUpperCase() === 'WO' ||
+              row['WO visitante']?.toUpperCase() === 'WO';
 
-          const pontosMandanteRaw = row['Pontos Mandante']?.trim();
-          const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
-          const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
+            const pontosMandanteRaw = row['Pontos Mandante']?.trim();
+            const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
+            const encerrada =
+              pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
 
-          const pontosMandante = Number(pontosMandanteRaw);
-          const pontosVisitante = Number(pontosVisitanteRaw);
+            const pontosMandante = Number(pontosMandanteRaw);
+            const pontosVisitante = Number(pontosVisitanteRaw);
 
-          let status: 'wo' | 'encerrada' | 'agendada';
-          if (isWO) {
-            status = 'wo';
-          } else if (encerrada) {
-            status = 'encerrada';
-          } else {
-            status = 'agendada';
+            let status: 'wo' | 'encerrada' | 'agendada';
+            if (isWO) {
+              status = 'wo';
+            } else if (encerrada) {
+              status = 'encerrada';
+            } else {
+              status = 'agendada';
+            }
+
+            const campoNeutro = row['Campo Neutro?']?.trim();
+            const local = campoNeutro || row['Clube Mandante'];
+
+            const dataISO = this.toISODate(row['Data']);
+            const dataFormatada = this.toFormattedDate(row['Data']);
+
+            return {
+              id: String(index + 1).padStart(3, '0'),
+              data: dataISO,
+              dataFormatada,
+              local,
+              status,
+              clubeMandante: row['Clube Mandante'],
+              clubeVisitante: row['Clube Visitante'],
+              resultado:
+                encerrada || isWO
+                  ? {
+                      clubeCasa: row['Clube Mandante'],
+                      pontosCasa: pontosMandante,
+                      clubeVisitante: row['Clube Visitante'],
+                      pontosVisitante: pontosVisitante,
+                    }
+                  : undefined,
+            };
           }
-
-          const campoNeutro = row['Campo Neutro?']?.trim();
-          const local = campoNeutro || row['Clube Mandante'];
-
-          const dataISO = this.toISODate(row['Data']);
-          const dataFormatada = this.toFormattedDate(row['Data']);
-
-          return {
-            id: String(index + 1).padStart(3, '0'),
-            data: dataISO,
-            dataFormatada,
-            local,
-            status,
-            clubeMandante: row['Clube Mandante'],
-            clubeVisitante: row['Clube Visitante'],
-            resultado:
-              encerrada || isWO
-                ? {
-                    clubeCasa: row['Clube Mandante'],
-                    pontosCasa: pontosMandante,
-                    clubeVisitante: row['Clube Visitante'],
-                    pontosVisitante: pontosVisitante,
-                  }
-                : undefined,
-          };
-        });
+        );
 
         observer.next(partidas);
         observer.complete();
@@ -114,7 +142,8 @@ export class CampeonatoService {
         for (const partida of partidas) {
           if (!partida.resultado) continue;
 
-          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } = partida.resultado;
+          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } =
+            partida.resultado;
 
           for (const nome of [clubeCasa, clubeVisitante]) {
             if (!ranking[nome]) {
@@ -122,11 +151,9 @@ export class CampeonatoService {
             }
           }
 
-          // PONTOS — será substituído futuramente por lógica do service
           ranking[clubeCasa].pontos += pontosCasa;
           ranking[clubeVisitante].pontos += pontosVisitante;
 
-          // Vitórias e derrotas (informativo)
           if (pontosCasa > pontosVisitante) {
             ranking[clubeCasa].vitorias += 1;
             ranking[clubeVisitante].derrotas += 1;
@@ -136,8 +163,26 @@ export class CampeonatoService {
           }
         }
 
-        return Object.values(ranking).sort((a, b) => b.pontos - a.pontos);
-      })
+        return ranking;
+      }),
+      // Agora combinamos com os endereços
+      map((ranking) =>
+        this.getClubes().pipe(
+          map((clubes) => {
+            const enderecoMap = Object.fromEntries(
+              clubes.map((c) => [c.nome, c.endereco])
+            );
+            return Object.values(ranking)
+              .map((c) => ({
+                ...c,
+                endereco: enderecoMap[c.nome] ?? '',
+              }))
+              .sort((a, b) => b.pontos - a.pontos);
+          })
+        )
+      ),
+      // Flatten the nested observable
+      switchAll()
     );
   }
 
