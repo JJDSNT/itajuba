@@ -1,4 +1,4 @@
-// 🏆 Classificação
+// 🏆 Classificação de clubes
 export interface ClubeClassificacao {
   nome: string;
   pontos: number;
@@ -6,10 +6,10 @@ export interface ClubeClassificacao {
   derrotas: number;
 }
 
-// 📊 Status de uma partida
+// 📊 Status possível de uma partida
 export type PartidaStatus = 'agendada' | 'encerrada' | 'wo';
 
-// 🎯 Resultado da partida individual
+// 🎯 Resultado completo (caso tenha sido encerrada ou WO)
 export interface ResultadoPartida {
   clubeCasa: string;
   pontosCasa: number;
@@ -17,11 +17,11 @@ export interface ResultadoPartida {
   pontosVisitante: number;
 }
 
-// ⚔️ Partidas individuais (vinda da planilha CSV)
+// ⚔️ Partida individual (extraída do CSV)
 export interface PartidaModel {
   id: string;
-  data: string; // formato ISO: '2025-04-20' → usado para ordenação/lógica
-  dataFormatada: string; // formato exibido: '20/04/25' → usado no template
+  data: string;             // ISO: '2025-04-20' → ordenação
+  dataFormatada: string;    // Visual: '20/04/25' → exibição
   local: string;
   status: PartidaStatus;
   clubeMandante: string;
@@ -29,7 +29,7 @@ export interface PartidaModel {
   resultado?: ResultadoPartida;
 }
 
-// 🧩 Partida formatada para agrupamento em rodada
+// 📍 Partida agrupada por rodada (pronta para exibição)
 export interface JogoRodada {
   mandante: string;
   visitante: string;
@@ -39,9 +39,9 @@ export interface JogoRodada {
   pontosVisitante?: number;
 }
 
-// 📅 Rodada agrupando os jogos de uma data
+// 📅 Rodada (conjunto de jogos em uma data)
 export interface Rodada {
-  data: string; // ISO
-  dataFormatada: string; // Visual
+  data: string;             // ISO
+  dataFormatada: string;    // Visual
   jogos: JogoRodada[];
 }
