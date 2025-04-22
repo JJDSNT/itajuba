@@ -5,7 +5,7 @@
     <span style="margin-left: 0.5rem">{{ expandido ? "▲" : "▼" }}</span>
   </button>
 
-  <div *ngIf="expandido">
+  <div *ngIf="expandido" class="jogos">
     <app-jogo-rodada-card *ngFor="let jogo of jogos" [jogo]="jogo" />
   </div>
 </div>

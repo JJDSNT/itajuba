@@ -1,6 +1,6 @@
 .partida-card {
   border: 1px solid #ddd;
-  padding: 1rem;
+  padding: 0 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
   background: #fff;
@@ -23,7 +23,7 @@
 
 .info {
   font-weight: bold;
-  margin-bottom: 0.25rem;
+  margin: 0.25rem;
 }
 .endereco{
   font-size: 0.9rem;

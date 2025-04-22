@@ -1,10 +1,4 @@
 <div class="partida-card">
-  <div class="info">
-    📍 <strong>{{ jogo.local }}</strong>
-    <div class="endereco" *ngIf="endereco">
-      {{ endereco }}
-    </div>
-  </div>
   <ng-container *ngIf="jogo.pontosMandante != null && jogo.pontosVisitante != null; else agendada">
     <div class="resultado">
       {{ jogo.mandante }} {{ jogo.pontosMandante }} x {{ jogo.pontosVisitante }} {{ jogo.visitante }}
@@ -15,6 +9,12 @@
       <span *ngIf="jogo.status !== 'wo'">({{ pontosTextoSimples }})</span>
     </div>
   </ng-container>
+  <div class="info">
+    📍 <strong>{{ jogo.local }}</strong>
+    <div class="endereco" *ngIf="endereco">
+      {{ endereco }}
+    </div>
+  </div>
 
   <ng-template #agendada>
     <div class="resultado">
