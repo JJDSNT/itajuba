@@ -37,13 +37,25 @@
       "src": "screenshots/partidas.jpg",
       "sizes": "720x1280",
       "type": "image/jpg",
-      "label": "Lista de partidas"
+      "label": "Lista de partidas",
+      "platform": "mobile",
+      "form_factor": "phone"
     },
     {
       "src": "screenshots/classificacao.jpg",
       "sizes": "720x1280",
       "type": "image/jpg",
-      "label": "Classificação por clubes"
+      "label": "Classificação por clubes",
+      "platform": "mobile",
+      "form_factor": "phone"
+    },
+    {
+      "src": "screenshots/homepage-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Página inicial",
+      "platform": "web",
+      "form_factor": "wide"
     }
   ]
 }
