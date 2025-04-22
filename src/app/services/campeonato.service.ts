@@ -20,15 +20,14 @@ export class CampeonatoService {
     'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&gid=29461594';
 
   private readonly csv$: Observable<string>;
+  private readonly clubes$: Observable<ClubeInfo[]>;
 
   constructor(private readonly http: HttpClient) {
     this.csv$ = this.http
       .get(this.csvUrl, { responseType: 'text' })
       .pipe(shareReplay(1));
-  }
 
-  getClubes(): Observable<ClubeInfo[]> {
-    return this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
+    this.clubes$ = this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
       map((csv) => {
         const parsed = Papa.parse(csv, { header: true });
         return (parsed.data as any[])
@@ -40,6 +39,10 @@ export class CampeonatoService {
       }),
       shareReplay(1)
     );
+  }
+
+  getClubes(): Observable<ClubeInfo[]> {
+    return this.clubes$;
   }
 
   getRodadas(): Observable<Rodada[]> {
