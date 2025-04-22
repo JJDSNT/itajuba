@@ -14,7 +14,7 @@ import {
 })
 export class CampeonatoService {
   private readonly csvUrl =
-    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0';
+    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0&nocache=${Date.now()}';
 
   private readonly clubesUrl =
     'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&gid=29461594';
@@ -141,15 +141,17 @@ export class CampeonatoService {
     return this.getPartidas().pipe(
       map((partidas) => {
         const ranking: Record<string, ClubeClassificacao> = {};
-
+  
         for (const partida of partidas) {
           if (!partida.resultado) continue;
-
-          const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } =
-            partida.resultado;
-
-          // Inicializa clubes
-          for (const nome of [clubeCasa, clubeVisitante]) {
+  
+          const mandante = partida.clubeMandante;
+          const visitante = partida.clubeVisitante;
+          const pontosMandante = partida.resultado.pontosCasa;
+          const pontosVisitante = partida.resultado.pontosVisitante;
+  
+          // Inicializa os clubes se ainda não estiverem no ranking
+          for (const nome of [mandante, visitante]) {
             if (!ranking[nome]) {
               ranking[nome] = {
                 nome,
@@ -158,24 +160,22 @@ export class CampeonatoService {
               };
             }
           }
-
-          // Soma pontos oficiais
-          ranking[clubeCasa].pontos += pontosCasa;
-          ranking[clubeVisitante].pontos += pontosVisitante;
-
-          // Cálculo de saldo técnico
-          // saldo técnico: só muda se mandante perdeu ou visitante venceu fora
-          if (pontosCasa < pontosVisitante) {
-            const saldo = pontosVisitante - pontosCasa;
-
-            // mandante perdeu em casa
-            ranking[partida.clubeMandante].saldoTecnico -= saldo;
-
-            // visitante venceu fora
-            ranking[partida.clubeVisitante].saldoTecnico += saldo;
+  
+          // Soma os pontos ganhos
+          ranking[mandante].pontos += pontosMandante;
+          ranking[visitante].pontos += pontosVisitante;
+  
+          // Cálculo de saldo técnico:
+          // Apenas se o mandante perdeu (saldo negativo para ele)
+          // e o visitante venceu fora (saldo positivo para ele)
+          if (pontosMandante < pontosVisitante) {
+            const saldo = pontosVisitante - pontosMandante;
+  
+            ranking[mandante].saldoTecnico -= saldo;
+            ranking[visitante].saldoTecnico += saldo;
           }
         }
-
+  
         return ranking;
       }),
       map((ranking) =>
@@ -196,7 +196,7 @@ export class CampeonatoService {
       switchAll()
     );
   }
-
+  
   private toISODate(input: string): string {
     const [dia, mes] = input.split('/');
     return `2025-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
