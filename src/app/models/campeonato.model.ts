@@ -7,8 +7,7 @@ export interface ClubeInfo {
 export interface ClubeClassificacao {
   nome: string;
   pontos: number;
-  vitorias: number;
-  derrotas: number;
+  saldoTecnico: number;
   endereco?: string;
 }
 

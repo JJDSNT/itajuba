@@ -148,27 +148,36 @@ export class CampeonatoService {
           const { clubeCasa, pontosCasa, clubeVisitante, pontosVisitante } =
             partida.resultado;
 
+          // Inicializa clubes
           for (const nome of [clubeCasa, clubeVisitante]) {
             if (!ranking[nome]) {
-              ranking[nome] = { nome, pontos: 0, vitorias: 0, derrotas: 0 };
+              ranking[nome] = {
+                nome,
+                pontos: 0,
+                saldoTecnico: 0,
+              };
             }
           }
 
+          // Soma pontos oficiais
           ranking[clubeCasa].pontos += pontosCasa;
           ranking[clubeVisitante].pontos += pontosVisitante;
 
-          if (pontosCasa > pontosVisitante) {
-            ranking[clubeCasa].vitorias += 1;
-            ranking[clubeVisitante].derrotas += 1;
-          } else if (pontosVisitante > pontosCasa) {
-            ranking[clubeVisitante].vitorias += 1;
-            ranking[clubeCasa].derrotas += 1;
+          // Cálculo de saldo técnico
+          // saldo técnico: só muda se mandante perdeu ou visitante venceu fora
+          if (pontosCasa < pontosVisitante) {
+            const saldo = pontosVisitante - pontosCasa;
+
+            // mandante perdeu em casa
+            ranking[partida.clubeMandante].saldoTecnico -= saldo;
+
+            // visitante venceu fora
+            ranking[partida.clubeVisitante].saldoTecnico += saldo;
           }
         }
 
         return ranking;
       }),
-      // Agora combinamos com os endereços
       map((ranking) =>
         this.getClubes().pipe(
           map((clubes) => {
@@ -184,7 +193,6 @@ export class CampeonatoService {
           })
         )
       ),
-      // Flatten the nested observable
       switchAll()
     );
   }

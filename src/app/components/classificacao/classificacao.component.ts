@@ -1,12 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { ClubeClassificacao } from '../../models/campeonato.model';
 
-interface ClubeClassificacao {
-  nome: string;
-  pontos: number;
-  vitorias: number;
-  derrotas: number;
-}
+
 
 @Component({
   selector: 'app-classificacao',
