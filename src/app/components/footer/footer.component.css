@@ -4,9 +4,19 @@
   border-top: 1px solid #ccc;
 }
 
+.site-footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* se precisar quebrar em telas pequenas */
+}
+
+.site-footer .copyright {
+  margin: 0;
+}
+
 .site-footer .github-link {
-  text-align: center;
-  margin-top: 0.5rem;
+  margin: 0;
 }
 
 .site-footer .github-link a {

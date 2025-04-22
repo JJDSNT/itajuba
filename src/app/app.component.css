@@ -1,5 +1,6 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: #f9f9f9;
   color: #333;
@@ -8,26 +9,5 @@
 /* Conteúdo principal */
 .site-main {
   padding-top: 2rem;
-}
-
-/* Rodapé (se existir) */
-.site-footer {
-  width: 100%;
-  background-color: #fff;
-  border-top: 1px solid #ddd;
-  padding: 1rem 0;
-}
-
-.site-footer .github-link {
-  text-align: center;
-  margin-top: 0.5rem;
-}
-
-.site-footer .github-link a {
-  color: #1976d2;
-  text-decoration: none;
-}
-
-.site-footer .github-link a:hover {
-  text-decoration: underline;
+  flex: 1;
 }
