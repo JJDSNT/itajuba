@@ -38,16 +38,4 @@ export class JogoRodadaCardComponent implements OnInit {
     }
   }
 
-  get pontosTextoSimples(): string {
-    if (this.jogo.status === 'wo') {
-      return '+3 pts';
-    }
-
-    if (
-      this.jogo.pontosMandante === undefined ||
-      this.jogo.pontosVisitante === undefined
-    ) return '';
-
-    return 'Pontuação definida'; // só placeholder
-  }
 }

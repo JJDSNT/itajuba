@@ -6,7 +6,6 @@
     <div class="vencedor">
       Vencedor: {{ vencedorSimples }}
       <span *ngIf="jogo.status === 'wo'">(W.O.)</span>
-      <span *ngIf="jogo.status !== 'wo'">({{ pontosTextoSimples }})</span>
     </div>
   </ng-container>
   <div class="info">
