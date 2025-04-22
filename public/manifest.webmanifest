@@ -31,5 +31,19 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/partidas.jpg",
+      "sizes": "720x1280",
+      "type": "image/jpg",
+      "label": "Lista de partidas"
+    },
+    {
+      "src": "screenshots/classificacao.jpg",
+      "sizes": "720x1280",
+      "type": "image/jpg",
+      "label": "Classificação por clubes"
+    }
   ]
 }
