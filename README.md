@@ -13,8 +13,6 @@ Este projeto consiste no desenvolvimento de uma **plataforma digital** para o **
 - **Frontend** → Desenvolvido em **Angular**, responsável pela interface do usuário e comunicação com o backend.
 - **PWA** → Permitindo acesso direto em dispositivos móveis.   
 - **Backend** → Baseado no **Google Sheets**, onde os dados são armazenados e manipulados.
-- (talvez) **Integração com Google Calendar ou com o Calendário do Facebook** → Sincronização de eventos diretamente na agenda do clube.
-- (talvez) **Integração com Facebook** → Exibição automática das últimas notícias do clube através do feed do grupo oficial no Facebook.
 
 
 ## 🔧 Configuração e Execução
