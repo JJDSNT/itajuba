@@ -7,11 +7,6 @@
       [dataFormatada]="rodada.dataFormatada"
       [jogos]="rodada.jogos"
     />
-
-    <app-partida-card
-      *ngFor="let p of partidasEncerradas"
-      [partida]="p"
-    ></app-partida-card>
   </div>
 
   <div class="coluna">
@@ -27,11 +22,5 @@
     <ng-container *ngIf="!proximaRodada">
       <p>✅ Todas as rodadas foram concluídas!</p>
     </ng-container>
-    
-    <h2>Próxima Rodada old</h2>
-    <app-partida-card
-      *ngFor="let p of partidasAgendadas"
-      [partida]="p"
-    ></app-partida-card>
   </div>
 </section>
