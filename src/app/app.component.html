@@ -1,9 +1,15 @@
 <app-header />
 
-<main class="site-main">
+<main class="site-main" *ngIf="preloadFinalizado$ | async; else carregando">
   <div class="container">
     <router-outlet></router-outlet>
   </div>
 </main>
 
-<app-footer></app-footer>
+<ng-template #carregando>
+  <div class="splash-alternativo">
+    <p>Carregando informações do campeonato...</p>
+  </div>
+</ng-template>
+
+<app-footer />

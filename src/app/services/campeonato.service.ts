@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, startWith, of, tap, switchMap } from 'rxjs';
+import { map, Observable, shareReplay, startWith, of, tap, switchMap, BehaviorSubject } from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -20,6 +20,9 @@ export class CampeonatoService {
 
   private readonly csv$: Observable<string>;
   private readonly clubes$: Observable<ClubeInfo[]>;
+  private preloadExecucao$: Observable<void> | null = null;
+  private readonly preloadSubject = new BehaviorSubject<boolean>(false);
+  readonly preload$ = this.preloadSubject.asObservable();
 
   private partidasCarregadas = false;
   private partidasCache!: PartidaModel[];
@@ -45,12 +48,18 @@ export class CampeonatoService {
   }
 
   preloadDadosHome(): Observable<void> {
-    if (this.partidasCarregadas && this.classificacaoCache && this.rodadasCache) {
-      console.log('[CampeonatoService] Todos os dados já estavam carregados.');
-      return of(void 0);
+    const stack = new Error().stack;
+    const callerLine = stack?.split('\n')[2]?.trim();
+    console.warn('[CampeonatoService] preloadDadosHome() chamado por:', callerLine);
+  
+    if (this.preloadExecucao$) {
+      console.warn('[CampeonatoService] preloadDadosHome() já em andamento.');
+      return this.preloadExecucao$;
     }
-
-    return this.getPartidas().pipe(
+  
+    console.log('[CampeonatoService] Iniciando preloadDadosHome...');
+  
+    this.preloadExecucao$ = this.getPartidas().pipe(
       tap((partidas) => {
         this.partidasCache = partidas;
         this.partidasCarregadas = true;
@@ -66,10 +75,14 @@ export class CampeonatoService {
         this.classificacaoCache = classificacao;
         console.log(`[CampeonatoService] ${classificacao.length} clubes na classificação.`);
       }),
-      map(() => void 0)
+      tap(() => this.preloadSubject.next(true)),
+      map(() => void 0),
+      shareReplay(1)
     );
+  
+    return this.preloadExecucao$;
   }
-
+  
   getPartidasCache(): PartidaModel[] | null {
     return this.partidasCarregadas ? this.partidasCache : null;
   }
@@ -87,6 +100,8 @@ export class CampeonatoService {
   }
 
   getRodadas(): Observable<Rodada[]> {
+    const caller = new Error().stack?.split('\n')[2]?.trim();
+    console.warn('[CampeonatoService] getRodadas chamado por:', caller);
     if (this.rodadasCache) {
       return of(this.rodadasCache);
     }
@@ -121,6 +136,8 @@ export class CampeonatoService {
   }
 
   getPartidas(): Observable<PartidaModel[]> {
+    const caller = new Error().stack?.split('\n')[2]?.trim();
+    console.warn('[CampeonatoService] getPartidas chamado por:', caller);
     const cacheKey = 'partidas-cache-v1';
     const cacheRaw = localStorage.getItem(cacheKey);
     let cache: PartidaModel[] | null = null;
@@ -203,6 +220,8 @@ export class CampeonatoService {
   }
   
   getClassificacao(): Observable<ClubeClassificacao[]> {
+    const caller = new Error().stack?.split('\n')[2]?.trim();
+    console.warn('[CampeonatoService] getClassificacao chamado por:', caller);
     if (this.classificacaoCache) {
       return of(this.classificacaoCache);
     }

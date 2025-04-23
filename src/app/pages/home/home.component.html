@@ -1,2 +1,11 @@
-<app-classificacao [classificacao]="classificacao"></app-classificacao>
-<app-partidas-list [partidas]="partidas" [rodadas]="rodadas" />
+<ng-container *ngIf="preloadFinalizado$ | async as pronto; else carregando">
+  <ng-container *ngIf="pronto">
+    {{ onPreloadFinalizado() }}
+    <app-classificacao [classificacao]="classificacao"></app-classificacao>
+    <app-partidas-list [partidas]="partidas" [rodadas]="rodadas" />
+  </ng-container>
+</ng-container>
+
+<ng-template #carregando>
+  <p>⏳ Carregando dados...</p>
+</ng-template>
