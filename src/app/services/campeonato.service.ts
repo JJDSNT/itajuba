@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, switchAll } from 'rxjs';
+import { map, Observable, shareReplay, startWith, switchAll } from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -76,65 +76,78 @@ export class CampeonatoService {
   }
 
   getPartidas(): Observable<PartidaModel[]> {
-    return new Observable((observer) => {
-      this.csv$.subscribe((csvData) => {
+    const cacheKey = 'partidas-cache-v1';
+    const cacheRaw = localStorage.getItem(cacheKey);
+    let cache: PartidaModel[] | null = null;
+  
+    try {
+      cache = cacheRaw ? JSON.parse(cacheRaw) : null;
+    } catch {
+      cache = null;
+    }
+  
+    const atualiza$ = this.csv$.pipe(
+      map((csvData) => {
         const parsed = Papa.parse(csvData, { header: true });
-
-        const partidas: PartidaModel[] = parsed.data.map(
-          (row: any, index: number) => {
-            const isWO =
-              row['WO Mandante']?.toUpperCase() === 'WO' ||
-              row['WO visitante']?.toUpperCase() === 'WO';
-
-            const pontosMandanteRaw = row['Pontos Mandante']?.trim();
-            const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
-            const encerrada =
-              pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
-
-            const pontosMandante = Number(pontosMandanteRaw);
-            const pontosVisitante = Number(pontosVisitanteRaw);
-
-            let status: 'wo' | 'encerrada' | 'agendada';
-            if (isWO) {
-              status = 'wo';
-            } else if (encerrada) {
-              status = 'encerrada';
-            } else {
-              status = 'agendada';
-            }
-
-            const campoNeutro = row['Campo Neutro?']?.trim();
-            const local = campoNeutro || row['Clube Mandante'];
-
-            const dataISO = this.toISODate(row['Data']);
-            const dataFormatada = this.toFormattedDate(row['Data']);
-
-            return {
-              id: String(index + 1).padStart(3, '0'),
-              data: dataISO,
-              dataFormatada,
-              local,
-              status,
-              clubeMandante: row['Clube Mandante'],
-              clubeVisitante: row['Clube Visitante'],
-              resultado:
-                encerrada || isWO
-                  ? {
-                      clubeCasa: row['Clube Mandante'],
-                      pontosCasa: pontosMandante,
-                      clubeVisitante: row['Clube Visitante'],
-                      pontosVisitante: pontosVisitante,
-                    }
-                  : undefined,
-            };
+        const partidas: PartidaModel[] = parsed.data.map((row: any, index: number) => {
+          const isWO =
+            row['WO Mandante']?.toUpperCase() === 'WO' ||
+            row['WO visitante']?.toUpperCase() === 'WO';
+  
+          const pontosMandanteRaw = row['Pontos Mandante']?.trim();
+          const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
+          const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
+  
+          const pontosMandante = Number(pontosMandanteRaw);
+          const pontosVisitante = Number(pontosVisitanteRaw);
+  
+          let status: 'wo' | 'encerrada' | 'agendada';
+          if (isWO) {
+            status = 'wo';
+          } else if (encerrada) {
+            status = 'encerrada';
+          } else {
+            status = 'agendada';
           }
-        );
-
-        observer.next(partidas);
-        observer.complete();
-      });
-    });
+  
+          const campoNeutro = row['Campo Neutro?']?.trim();
+          const local = campoNeutro || row['Clube Mandante'];
+  
+          const dataISO = this.toISODate(row['Data']);
+          const dataFormatada = this.toFormattedDate(row['Data']);
+  
+          return {
+            id: String(index + 1).padStart(3, '0'),
+            data: dataISO,
+            dataFormatada,
+            local,
+            status,
+            clubeMandante: row['Clube Mandante'],
+            clubeVisitante: row['Clube Visitante'],
+            resultado:
+              encerrada || isWO
+                ? {
+                    clubeCasa: row['Clube Mandante'],
+                    pontosCasa: pontosMandante,
+                    clubeVisitante: row['Clube Visitante'],
+                    pontosVisitante: pontosVisitante,
+                  }
+                : undefined,
+          };
+        });
+  
+        // Atualiza o cache local
+        localStorage.setItem(cacheKey, JSON.stringify(partidas));
+        return partidas;
+      }),
+      shareReplay(1)
+    );
+  
+    return cache
+      ? atualiza$.pipe(startWith(cache)) // mostra o cache e atualiza por trás
+      : atualiza$; // sem cache, segue direto
   }
+  
 
   getClassificacao(): Observable<ClubeClassificacao[]> {
     return this.getPartidas().pipe(

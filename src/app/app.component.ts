@@ -3,14 +3,14 @@ import { RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from "./components/footer/footer.component";
+import { FooterComponent } from './components/footer/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
   title = 'itajuba';
@@ -32,6 +32,17 @@ export class AppComponent {
           console.log('Nova versão disponível. Recarregando...');
           document.location.reload();
         });
+    }
+  }
+
+  ngOnInit(): void {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+      // Garante que o splash fique visível por pelo menos 1.5s
+      setTimeout(() => {
+        splash.classList.add('fade-out');
+        setTimeout(() => splash.remove(), 300); // tempo do fade-out
+      }, 1500); // tempo mínimo de exibição
     }
   }
 }
