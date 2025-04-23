@@ -29,8 +29,19 @@ export class AppComponent {
           filter((event) => event.type === 'VERSION_READY')
         )
         .subscribe(() => {
-          console.log('Nova versão disponível. Recarregando...');
-          document.location.reload();
+          const splash = document.getElementById('splash-screen');
+          const splashText = document.getElementById('splash-text');
+
+          if (splash && splashText) {
+            splashText.textContent = 'Nova versão disponível. Recarregando...';
+            splash.classList.remove('fade-out'); // traz de volta se tinha sumido
+            splash.style.display = 'flex'; // garante visibilidade
+          }
+
+          // Pequeno atraso para usuário ler antes do reload
+          setTimeout(() => {
+            document.location.reload();
+          }, 1000);
         });
     }
   }
@@ -38,11 +49,11 @@ export class AppComponent {
   ngOnInit(): void {
     const splash = document.getElementById('splash-screen');
     if (splash) {
-      // Garante que o splash fique visível por pelo menos 1.5s
+      // Espera 1.5s antes de iniciar o fade-out padrão
       setTimeout(() => {
         splash.classList.add('fade-out');
         setTimeout(() => splash.remove(), 300); // tempo do fade-out
-      }, 1500); // tempo mínimo de exibição
+      }, 1500);
     }
   }
 }

@@ -11,3 +11,13 @@
   padding-top: 1rem;
   flex: 1;
 }
+
+#splash-screen {
+  opacity: 1;
+  display: flex;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#splash-screen.fade-out {
+  opacity: 0;
+}
