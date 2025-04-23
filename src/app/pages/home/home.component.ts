@@ -22,16 +22,36 @@ export class HomeComponent implements OnInit {
   constructor(private readonly campeonatoService: CampeonatoService) {}
 
   ngOnInit(): void {
-    this.campeonatoService.getPartidas().subscribe((p) => {
-      this.partidas = p;
-    });
-
-    this.campeonatoService.getRodadas().subscribe((r) => {
-      this.rodadas = r;
-    });
-
-    this.campeonatoService.getClassificacao().subscribe((c) => {
-      this.classificacao = c;
-    });
+    console.log('[HomeComponent] Iniciando carregamento...');
+  
+    const partidas = this.campeonatoService.getPartidasCache();
+    if (partidas) {
+      console.log('[HomeComponent] Usando cache de partidas:', partidas.length);
+      this.partidas = partidas;
+    }
+  
+    const rodadas = this.campeonatoService.getRodadasCache();
+    if (rodadas) {
+      console.log('[HomeComponent] Usando cache de rodadas:', rodadas.length);
+      this.rodadas = rodadas;
+    } else {
+      this.campeonatoService.getRodadas().subscribe((r) => {
+        console.log('[HomeComponent] Rodadas recebidas:', r.length);
+        this.rodadas = r;
+      });
+    }
+  
+    const classificacao = this.campeonatoService.getClassificacaoCache();
+    if (classificacao) {
+      console.log('[HomeComponent] Usando cache de classificação:', classificacao.length);
+      this.classificacao = classificacao;
+    } else {
+      this.campeonatoService.getClassificacao().subscribe((c) => {
+        console.log('[HomeComponent] Classificação recebida:', c.length);
+        this.classificacao = c;
+      });
+    }
   }
+  
+  
 }

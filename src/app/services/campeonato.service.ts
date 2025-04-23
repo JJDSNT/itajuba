@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, startWith, of, tap, switchAll } from 'rxjs';
+import { map, Observable, shareReplay, startWith, of, tap, switchMap } from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -23,12 +23,14 @@ export class CampeonatoService {
 
   private partidasCarregadas = false;
   private partidasCache!: PartidaModel[];
-  private readonly classificacaoCache!: ClubeClassificacao[];
+  private classificacaoCache!: ClubeClassificacao[];
+  private rodadasCache!: Rodada[];
 
   constructor(private readonly http: HttpClient) {
     this.csv$ = this.http.get(this.csvUrl, { responseType: 'text' }).pipe(shareReplay(1));
 
     this.clubes$ = this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
+      tap(() => console.log('[CampeonatoService] Baixando dados dos clubes...')),
       map((csv) => {
         const parsed = Papa.parse(csv, { header: true });
         return (parsed.data as any[])
@@ -43,15 +45,41 @@ export class CampeonatoService {
   }
 
   preloadDadosHome(): Observable<void> {
-    if (this.partidasCarregadas) return of(void 0);
+    if (this.partidasCarregadas && this.classificacaoCache && this.rodadasCache) {
+      console.log('[CampeonatoService] Todos os dados já estavam carregados.');
+      return of(void 0);
+    }
 
     return this.getPartidas().pipe(
       tap((partidas) => {
         this.partidasCache = partidas;
         this.partidasCarregadas = true;
+        console.log(`[CampeonatoService] ${partidas.length} partidas carregadas.`);
+      }),
+      switchMap(() => this.getRodadas()),
+      tap((rodadas) => {
+        this.rodadasCache = rodadas;
+        console.log(`[CampeonatoService] ${rodadas.length} rodadas carregadas.`);
+      }),
+      switchMap(() => this.getClassificacao()),
+      tap((classificacao) => {
+        this.classificacaoCache = classificacao;
+        console.log(`[CampeonatoService] ${classificacao.length} clubes na classificação.`);
       }),
       map(() => void 0)
     );
+  }
+
+  getPartidasCache(): PartidaModel[] | null {
+    return this.partidasCarregadas ? this.partidasCache : null;
+  }
+
+  getClassificacaoCache(): ClubeClassificacao[] | null {
+    return this.classificacaoCache ?? null;
+  }
+  
+  getRodadasCache(): Rodada[] | null {
+    return this.rodadasCache ?? null;
   }
 
   getClubes(): Observable<ClubeInfo[]> {
@@ -59,6 +87,9 @@ export class CampeonatoService {
   }
 
   getRodadas(): Observable<Rodada[]> {
+    if (this.rodadasCache) {
+      return of(this.rodadasCache);
+    }
     return this.getPartidas().pipe(
       map((partidas) => {
         const agrupadas = new Map<string, Rodada>();
@@ -93,28 +124,28 @@ export class CampeonatoService {
     const cacheKey = 'partidas-cache-v1';
     const cacheRaw = localStorage.getItem(cacheKey);
     let cache: PartidaModel[] | null = null;
-
+  
     try {
       cache = cacheRaw ? JSON.parse(cacheRaw) : null;
     } catch {
       cache = null;
     }
-
+  
     const atualiza$ = this.csv$.pipe(
       map((csvData) => {
         const parsed = Papa.parse(csvData, { header: true });
-        const partidas: PartidaModel[] = parsed.data.map((row: any, index: number) => {
+        return parsed.data.map((row: any, index: number) => {
           const isWO =
             row['WO Mandante']?.toUpperCase() === 'WO' ||
             row['WO visitante']?.toUpperCase() === 'WO';
-
+  
           const pontosMandanteRaw = row['Pontos Mandante']?.trim();
           const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
           const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
-
+  
           const pontosMandante = Number(pontosMandanteRaw);
           const pontosVisitante = Number(pontosVisitanteRaw);
-
+  
           let status: 'wo' | 'encerrada' | 'agendada';
           if (isWO) {
             status = 'wo';
@@ -123,13 +154,13 @@ export class CampeonatoService {
           } else {
             status = 'agendada';
           }
-
+  
           const campoNeutro = row['Campo Neutro?']?.trim();
           const local = campoNeutro || row['Clube Mandante'];
-
+  
           const dataISO = this.toISODate(row['Data']);
           const dataFormatada = this.toFormattedDate(row['Data']);
-
+  
           return {
             id: String(index + 1).padStart(3, '0'),
             data: dataISO,
@@ -149,17 +180,33 @@ export class CampeonatoService {
                 : undefined,
           };
         });
-
-        localStorage.setItem(cacheKey, JSON.stringify(partidas));
-        return partidas;
       }),
+      switchMap((partidas: PartidaModel[]) =>
+        this.getClubes().pipe(
+          map((clubes) => {
+            const enderecoMap = Object.fromEntries(
+              clubes.map(c => [c.nome.trim(), c.endereco])
+            );
+            const enriquecidas = partidas.map((partida) => ({
+              ...partida,
+              enderecoMandante: enderecoMap[partida.clubeMandante.trim()] ?? '',
+            }));
+            localStorage.setItem(cacheKey, JSON.stringify(enriquecidas));
+            return enriquecidas;
+          })
+        )
+      ),
       shareReplay(1)
     );
-
+  
     return cache ? atualiza$.pipe(startWith(cache)) : atualiza$;
   }
-
+  
   getClassificacao(): Observable<ClubeClassificacao[]> {
+    if (this.classificacaoCache) {
+      return of(this.classificacaoCache);
+    }
+
     return this.getPartidas().pipe(
       map((partidas) => {
         const ranking: Record<string, ClubeClassificacao> = {};
@@ -195,7 +242,7 @@ export class CampeonatoService {
 
         return ranking;
       }),
-      map((ranking) =>
+      switchMap((ranking) =>
         this.getClubes().pipe(
           map((clubes) => {
             const enderecoMap = Object.fromEntries(
@@ -209,12 +256,15 @@ export class CampeonatoService {
               .sort((a, b) => b.pontos - a.pontos);
           })
         )
-      ),
-      switchAll()
+      )
     );
   }
 
-  inferirSaldoTecnico(pontosMandante: number, pontosVisitante: number): [number, number] {
+
+  inferirSaldoTecnico(
+    pontosMandante: number,
+    pontosVisitante: number
+  ): [number, number] {
     if (pontosVisitante === 0) {
       return [0, 0];
     }

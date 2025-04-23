@@ -31,6 +31,7 @@ export interface PartidaModel {
   status: PartidaStatus;
   clubeMandante: string;
   clubeVisitante: string;
+  nderecoMandante?: string;
   resultado?: ResultadoPartida;
 }
 

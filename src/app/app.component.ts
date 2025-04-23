@@ -18,7 +18,6 @@ export class AppComponent {
   currentYear = new Date().getFullYear();
 
   private readonly campeonato = inject(CampeonatoService);
-
   private readonly updates = inject(SwUpdate);
   private readonly appRef = inject(ApplicationRef);
 
@@ -37,11 +36,10 @@ export class AppComponent {
 
           if (splash && splashText) {
             splashText.textContent = 'Nova versão disponível. Recarregando...';
-            splash.classList.remove('fade-out'); // traz de volta se tinha sumido
-            splash.style.display = 'flex'; // garante visibilidade
+            splash.classList.remove('fade-out');
+            splash.style.display = 'flex';
           }
 
-          // Pequeno atraso para usuário ler antes do reload
           setTimeout(() => {
             document.location.reload();
           }, 1000);
@@ -50,15 +48,18 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.campeonato.preloadDadosHome().subscribe();
-
     const splash = document.getElementById('splash-screen');
-    if (splash) {
-      // Espera 1.5s antes de iniciar o fade-out padrão
-      setTimeout(() => {
+    const splashText = document.getElementById('splash-text');
+
+    if (splash && splashText) {
+      splashText.textContent = 'Pré-carregando os dados...';
+
+      console.log('[AppComponent] Iniciando preload de dados...');
+      this.campeonato.preloadDadosHome().subscribe(() => {
+        console.log('[AppComponent] Preload concluído. Removendo splash...');
         splash.classList.add('fade-out');
-        setTimeout(() => splash.remove(), 300); // tempo do fade-out
-      }, 1500);
+        setTimeout(() => splash.remove(), 300);
+      });
     }
   }
 }
