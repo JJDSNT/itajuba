@@ -54,11 +54,14 @@ jobs:
       - name: Build with Angular.js
         run: ${{ steps.detect-package-manager.outputs.runner }} build:prod
 
+      - name: Copy index.html to 404.html
+        run: cp ./dist/itajuba/browser/index.html ./dist/itajuba/browser/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist/itajuba/browser
-      
+
   deploy:
     environment:
       name: github-pages
@@ -69,6 +72,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
 #       - name: Run tests
 #         run: npm run test:headless
