@@ -4,6 +4,7 @@ import { SwUpdate } from '@angular/service-worker';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { CampeonatoService } from './services/campeonato.service';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,8 @@ import { FooterComponent } from './components/footer/footer.component';
 export class AppComponent {
   title = 'itajuba';
   currentYear = new Date().getFullYear();
+
+  private readonly campeonato = inject(CampeonatoService);
 
   private readonly updates = inject(SwUpdate);
   private readonly appRef = inject(ApplicationRef);
@@ -47,6 +50,8 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
+    this.campeonato.preloadDadosHome().subscribe();
+
     const splash = document.getElementById('splash-screen');
     if (splash) {
       // Espera 1.5s antes de iniciar o fade-out padrão

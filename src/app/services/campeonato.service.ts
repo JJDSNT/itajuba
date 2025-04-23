@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, startWith, switchAll } from 'rxjs';
+import { map, Observable, shareReplay, startWith, of, tap, switchAll } from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -21,10 +21,12 @@ export class CampeonatoService {
   private readonly csv$: Observable<string>;
   private readonly clubes$: Observable<ClubeInfo[]>;
 
+  private partidasCarregadas = false;
+  private partidasCache!: PartidaModel[];
+  private readonly classificacaoCache!: ClubeClassificacao[];
+
   constructor(private readonly http: HttpClient) {
-    this.csv$ = this.http
-      .get(this.csvUrl, { responseType: 'text' })
-      .pipe(shareReplay(1));
+    this.csv$ = this.http.get(this.csvUrl, { responseType: 'text' }).pipe(shareReplay(1));
 
     this.clubes$ = this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
       map((csv) => {
@@ -37,6 +39,18 @@ export class CampeonatoService {
           .filter((c) => c.nome && c.endereco);
       }),
       shareReplay(1)
+    );
+  }
+
+  preloadDadosHome(): Observable<void> {
+    if (this.partidasCarregadas) return of(void 0);
+
+    return this.getPartidas().pipe(
+      tap((partidas) => {
+        this.partidasCache = partidas;
+        this.partidasCarregadas = true;
+      }),
+      map(() => void 0)
     );
   }
 
@@ -79,13 +93,13 @@ export class CampeonatoService {
     const cacheKey = 'partidas-cache-v1';
     const cacheRaw = localStorage.getItem(cacheKey);
     let cache: PartidaModel[] | null = null;
-  
+
     try {
       cache = cacheRaw ? JSON.parse(cacheRaw) : null;
     } catch {
       cache = null;
     }
-  
+
     const atualiza$ = this.csv$.pipe(
       map((csvData) => {
         const parsed = Papa.parse(csvData, { header: true });
@@ -93,14 +107,14 @@ export class CampeonatoService {
           const isWO =
             row['WO Mandante']?.toUpperCase() === 'WO' ||
             row['WO visitante']?.toUpperCase() === 'WO';
-  
+
           const pontosMandanteRaw = row['Pontos Mandante']?.trim();
           const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
           const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
-  
+
           const pontosMandante = Number(pontosMandanteRaw);
           const pontosVisitante = Number(pontosVisitanteRaw);
-  
+
           let status: 'wo' | 'encerrada' | 'agendada';
           if (isWO) {
             status = 'wo';
@@ -109,13 +123,13 @@ export class CampeonatoService {
           } else {
             status = 'agendada';
           }
-  
+
           const campoNeutro = row['Campo Neutro?']?.trim();
           const local = campoNeutro || row['Clube Mandante'];
-  
+
           const dataISO = this.toISODate(row['Data']);
           const dataFormatada = this.toFormattedDate(row['Data']);
-  
+
           return {
             id: String(index + 1).padStart(3, '0'),
             data: dataISO,
@@ -135,19 +149,15 @@ export class CampeonatoService {
                 : undefined,
           };
         });
-  
-        // Atualiza o cache local
+
         localStorage.setItem(cacheKey, JSON.stringify(partidas));
         return partidas;
       }),
       shareReplay(1)
     );
-  
-    return cache
-      ? atualiza$.pipe(startWith(cache)) // mostra o cache e atualiza por trás
-      : atualiza$; // sem cache, segue direto
+
+    return cache ? atualiza$.pipe(startWith(cache)) : atualiza$;
   }
-  
 
   getClassificacao(): Observable<ClubeClassificacao[]> {
     return this.getPartidas().pipe(
@@ -162,7 +172,6 @@ export class CampeonatoService {
           const pontosMandante = partida.resultado.pontosCasa;
           const pontosVisitante = partida.resultado.pontosVisitante;
 
-          // Inicializa os clubes no ranking
           for (const nome of [mandante, visitante]) {
             if (!ranking[nome]) {
               ranking[nome] = {
@@ -173,11 +182,9 @@ export class CampeonatoService {
             }
           }
 
-          // Soma os pontos oficiais da rodada
           ranking[mandante].pontos += pontosMandante;
           ranking[visitante].pontos += pontosVisitante;
 
-          // Aplica o saldo técnico inferido com base apenas nos pontos ganhos
           const [saldoMandante, saldoVisitante] = this.inferirSaldoTecnico(
             pontosMandante,
             pontosVisitante
@@ -211,11 +218,9 @@ export class CampeonatoService {
     if (pontosVisitante === 0) {
       return [0, 0];
     }
-  
+
     return [-pontosVisitante, +pontosVisitante];
   }
-  
-  
 
   private toISODate(input: string): string {
     const [dia, mes] = input.split('/');
