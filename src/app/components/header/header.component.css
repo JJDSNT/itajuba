@@ -1,8 +1,29 @@
 .site-header {
-  background: #eee;
-  padding: 1rem;
-  border-bottom: 1px solid #ccc;
+  background: linear-gradient(to right, #f0f0f0, #e4e4e4);
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #bbb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
+
+.site-slogan {
+  position: absolute;
+  bottom: -1.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  padding: 0.3rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+  z-index: 10;
+}
+
 
 .container {
   display: flex;
