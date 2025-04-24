@@ -8,7 +8,6 @@
       "resources": {
         "files": [
           "/index.html",
-          "/index.csr.html",
           "/assets/manifest.webmanifest",
           "/assets/icons/favicon.ico",
           "/*.css",
@@ -22,8 +21,8 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/assets/icons/*.(svg|png|jpg|webp)",
-          "/assets/screenshots/*.(jpg|png)"
+          "/assets/icons/**",
+          "/assets/screenshots/**"
         ]
       }
     }

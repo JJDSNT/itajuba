@@ -22,7 +22,11 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              }
             ],
             "styles": [
               "src/styles.css"
@@ -31,6 +35,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/itajuba/",
               "budgets": [
                 {
                   "type": "initial",
