@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 })
 export class HomeComponent {
   private readonly campeonatoService = inject(CampeonatoService);
+  private carregado = false;
   
   classificacao: ClubeClassificacao[] = [];
   partidas: PartidaModel[] = [];
@@ -24,10 +25,21 @@ export class HomeComponent {
 
   readonly preloadFinalizado$ = this.campeonatoService.preload$;
 
+  constructor() {
+    this.preloadFinalizado$.subscribe((ok) => {
+      if (ok && !this.carregado) {
+        this.carregado = true;
+        this.onPreloadFinalizado();
+      }
+    });
+  }
+  
+
   onPreloadFinalizado(): void {
     this.partidas = this.campeonatoService.getPartidasCache() ?? [];
     this.rodadas = this.campeonatoService.getRodadasCache() ?? [];
     this.classificacao = this.campeonatoService.getClassificacaoCache() ?? [];
+
     console.log('[HomeComponent] Dados carregados:', {
       partidas: this.partidas.length,
       rodadas: this.rodadas.length,

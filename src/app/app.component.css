@@ -5,15 +5,31 @@
   background-color: #f9f9f9;
   color: #333;
 }
-/* Tela de carregamento */
+
+/* Tela de carregamento principal (splash inicial) */
 #splash-screen {
   opacity: 1;
   display: flex;
-  transition: opacity 0.3s ease-in-out;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: all;
 }
 
 #splash-screen.fade-out {
   opacity: 0;
+  pointer-events: none;
+}
+
+/* Fallback caso ng-template #carregando esteja visível */
+.splash-alternativo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  padding: 2rem;
+  text-align: center;
 }
 
 /* Conteúdo principal */
@@ -24,8 +40,7 @@
 
 .container {
   max-width: 960px;
+  width: 100%;
   margin: 0 auto;
   padding: 1rem 1rem 2rem;
 }
-
-

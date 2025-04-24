@@ -1,15 +1,21 @@
 <app-header />
 
-<main class="site-main" *ngIf="preloadFinalizado$ | async; else carregando">
+<!-- Conteúdo principal só aparece após preload -->
+<main class="site-main" *ngIf="!splashState">
   <div class="container">
     <router-outlet></router-outlet>
   </div>
 </main>
 
-<ng-template #carregando>
+<!-- Splash personalizado com base no estado atual -->
+<ng-container *ngIf="splashState as state">
   <div class="splash-alternativo">
-    <p>Carregando informações do campeonato...</p>
+    <ng-container [ngSwitch]="state">
+      <p *ngSwitchCase="SplashState.LoadingApp">Inicializando aplicação...</p>
+      <p *ngSwitchCase="SplashState.PreloadingData">Carregando informações do campeonato...</p>
+      <p *ngSwitchCase="SplashState.UpdatingPWA">Nova versão disponível. Recarregando...</p>
+    </ng-container>
   </div>
-</ng-template>
+</ng-container>
 
 <app-footer />

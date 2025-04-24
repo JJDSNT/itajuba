@@ -7,6 +7,12 @@ import { FooterComponent } from './components/footer/footer.component';
 import { CampeonatoService } from './services/campeonato.service';
 import { CommonModule } from '@angular/common';
 
+enum SplashState {
+  LoadingApp = 'loading-app',
+  PreloadingData = 'preloading-data',
+  UpdatingPWA = 'updating-pwa',
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,6 +24,9 @@ export class AppComponent {
   title = 'itajuba';
   currentYear = new Date().getFullYear();
 
+  readonly SplashState = SplashState;
+  splashState: SplashState | null = SplashState.LoadingApp;
+
   private readonly campeonato = inject(CampeonatoService);
   private readonly updates = inject(SwUpdate);
   private readonly appRef = inject(ApplicationRef);
@@ -25,7 +34,7 @@ export class AppComponent {
   preloadFinalizado$ = this.campeonato.preload$;
 
   constructor() {
-    // PWA updates
+    // Atualização de versão PWA
     if (this.updates.isEnabled) {
       this.appRef.isStable
         .pipe(
@@ -35,6 +44,7 @@ export class AppComponent {
           filter((event) => event.type === 'VERSION_READY')
         )
         .subscribe(() => {
+          this.splashState = SplashState.UpdatingPWA;
           const splash = document.getElementById('splash-screen');
           const splashText = document.getElementById('splash-text');
           if (splash && splashText) {
@@ -46,11 +56,13 @@ export class AppComponent {
         });
     }
 
-    // Inicia preload
+    // Início do preload de dados
+    this.splashState = SplashState.PreloadingData;
     this.campeonato.preloadDadosHome().subscribe();
 
-    // Remove splash quando preload finalizar
+    // Remove splash ao final do preload
     this.preloadFinalizado$.pipe(filter(Boolean), first()).subscribe(() => {
+      this.splashState = null;
       const splash = document.getElementById('splash-screen');
       if (splash) {
         splash.classList.add('fade-out');

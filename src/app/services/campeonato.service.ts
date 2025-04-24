@@ -33,7 +33,6 @@ export class CampeonatoService {
     this.csv$ = this.http.get(this.csvUrl, { responseType: 'text' }).pipe(shareReplay(1));
 
     this.clubes$ = this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
-      tap(() => console.log('[CampeonatoService] Baixando dados dos clubes...')),
       map((csv) => {
         const parsed = Papa.parse(csv, { header: true });
         return (parsed.data as any[])
@@ -48,41 +47,31 @@ export class CampeonatoService {
   }
 
   preloadDadosHome(): Observable<void> {
-    const stack = new Error().stack;
-    const callerLine = stack?.split('\n')[2]?.trim();
-    console.warn('[CampeonatoService] preloadDadosHome() chamado por:', callerLine);
-  
     if (this.preloadExecucao$) {
-      console.warn('[CampeonatoService] preloadDadosHome() já em andamento.');
       return this.preloadExecucao$;
     }
-  
-    console.log('[CampeonatoService] Iniciando preloadDadosHome...');
-  
+
     this.preloadExecucao$ = this.getPartidas().pipe(
       tap((partidas) => {
         this.partidasCache = partidas;
         this.partidasCarregadas = true;
-        console.log(`[CampeonatoService] ${partidas.length} partidas carregadas.`);
       }),
       switchMap(() => this.getRodadas()),
       tap((rodadas) => {
         this.rodadasCache = rodadas;
-        console.log(`[CampeonatoService] ${rodadas.length} rodadas carregadas.`);
       }),
       switchMap(() => this.getClassificacao()),
       tap((classificacao) => {
         this.classificacaoCache = classificacao;
-        console.log(`[CampeonatoService] ${classificacao.length} clubes na classificação.`);
       }),
       tap(() => this.preloadSubject.next(true)),
       map(() => void 0),
       shareReplay(1)
     );
-  
+
     return this.preloadExecucao$;
   }
-  
+
   getPartidasCache(): PartidaModel[] | null {
     return this.partidasCarregadas ? this.partidasCache : null;
   }
@@ -90,7 +79,7 @@ export class CampeonatoService {
   getClassificacaoCache(): ClubeClassificacao[] | null {
     return this.classificacaoCache ?? null;
   }
-  
+
   getRodadasCache(): Rodada[] | null {
     return this.rodadasCache ?? null;
   }
@@ -100,8 +89,6 @@ export class CampeonatoService {
   }
 
   getRodadas(): Observable<Rodada[]> {
-    const caller = new Error().stack?.split('\n')[2]?.trim();
-    console.warn('[CampeonatoService] getRodadas chamado por:', caller);
     if (this.rodadasCache) {
       return of(this.rodadasCache);
     }
@@ -136,18 +123,16 @@ export class CampeonatoService {
   }
 
   getPartidas(): Observable<PartidaModel[]> {
-    const caller = new Error().stack?.split('\n')[2]?.trim();
-    console.warn('[CampeonatoService] getPartidas chamado por:', caller);
     const cacheKey = 'partidas-cache-v1';
     const cacheRaw = localStorage.getItem(cacheKey);
     let cache: PartidaModel[] | null = null;
-  
+
     try {
       cache = cacheRaw ? JSON.parse(cacheRaw) : null;
     } catch {
       cache = null;
     }
-  
+
     const atualiza$ = this.csv$.pipe(
       map((csvData) => {
         const parsed = Papa.parse(csvData, { header: true });
@@ -155,14 +140,14 @@ export class CampeonatoService {
           const isWO =
             row['WO Mandante']?.toUpperCase() === 'WO' ||
             row['WO visitante']?.toUpperCase() === 'WO';
-  
+
           const pontosMandanteRaw = row['Pontos Mandante']?.trim();
           const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
           const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
-  
+
           const pontosMandante = Number(pontosMandanteRaw);
           const pontosVisitante = Number(pontosVisitanteRaw);
-  
+
           let status: 'wo' | 'encerrada' | 'agendada';
           if (isWO) {
             status = 'wo';
@@ -171,13 +156,13 @@ export class CampeonatoService {
           } else {
             status = 'agendada';
           }
-  
+
           const campoNeutro = row['Campo Neutro?']?.trim();
           const local = campoNeutro || row['Clube Mandante'];
-  
+
           const dataISO = this.toISODate(row['Data']);
           const dataFormatada = this.toFormattedDate(row['Data']);
-  
+
           return {
             id: String(index + 1).padStart(3, '0'),
             data: dataISO,
@@ -215,13 +200,11 @@ export class CampeonatoService {
       ),
       shareReplay(1)
     );
-  
+
     return cache ? atualiza$.pipe(startWith(cache)) : atualiza$;
   }
-  
+
   getClassificacao(): Observable<ClubeClassificacao[]> {
-    const caller = new Error().stack?.split('\n')[2]?.trim();
-    console.warn('[CampeonatoService] getClassificacao chamado por:', caller);
     if (this.classificacaoCache) {
       return of(this.classificacaoCache);
     }
@@ -278,7 +261,6 @@ export class CampeonatoService {
       )
     );
   }
-
 
   inferirSaldoTecnico(
     pontosMandante: number,
