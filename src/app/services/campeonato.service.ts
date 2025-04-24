@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, startWith, of, tap, switchMap, BehaviorSubject } from 'rxjs';
+import { map, Observable, shareReplay, startWith, of, switchMap, BehaviorSubject, tap } from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -24,7 +24,6 @@ export class CampeonatoService {
   private readonly preloadSubject = new BehaviorSubject<boolean>(false);
   readonly preload$ = this.preloadSubject.asObservable();
 
-  private partidasCarregadas = false;
   private partidasCache!: PartidaModel[];
   private classificacaoCache!: ClubeClassificacao[];
   private rodadasCache!: Rodada[];
@@ -47,23 +46,14 @@ export class CampeonatoService {
   }
 
   preloadDadosHome(): Observable<void> {
-    if (this.preloadExecucao$) {
-      return this.preloadExecucao$;
-    }
+    if (this.preloadExecucao$) return this.preloadExecucao$;
 
     this.preloadExecucao$ = this.getPartidas().pipe(
-      tap((partidas) => {
-        this.partidasCache = partidas;
-        this.partidasCarregadas = true;
-      }),
+      tap((partidas) => (this.partidasCache = partidas)),
       switchMap(() => this.getRodadas()),
-      tap((rodadas) => {
-        this.rodadasCache = rodadas;
-      }),
+      tap((rodadas) => (this.rodadasCache = rodadas)),
       switchMap(() => this.getClassificacao()),
-      tap((classificacao) => {
-        this.classificacaoCache = classificacao;
-      }),
+      tap((classificacao) => (this.classificacaoCache = classificacao)),
       tap(() => this.preloadSubject.next(true)),
       map(() => void 0),
       shareReplay(1)
@@ -73,7 +63,7 @@ export class CampeonatoService {
   }
 
   getPartidasCache(): PartidaModel[] | null {
-    return this.partidasCarregadas ? this.partidasCache : null;
+    return this.partidasCache ?? null;
   }
 
   getClassificacaoCache(): ClubeClassificacao[] | null {
@@ -89,9 +79,8 @@ export class CampeonatoService {
   }
 
   getRodadas(): Observable<Rodada[]> {
-    if (this.rodadasCache) {
-      return of(this.rodadasCache);
-    }
+    if (this.rodadasCache) return of(this.rodadasCache);
+
     return this.getPartidas().pipe(
       map((partidas) => {
         const agrupadas = new Map<string, Rodada>();
@@ -205,9 +194,7 @@ export class CampeonatoService {
   }
 
   getClassificacao(): Observable<ClubeClassificacao[]> {
-    if (this.classificacaoCache) {
-      return of(this.classificacaoCache);
-    }
+    if (this.classificacaoCache) return of(this.classificacaoCache);
 
     return this.getPartidas().pipe(
       map((partidas) => {
@@ -262,14 +249,8 @@ export class CampeonatoService {
     );
   }
 
-  inferirSaldoTecnico(
-    pontosMandante: number,
-    pontosVisitante: number
-  ): [number, number] {
-    if (pontosVisitante === 0) {
-      return [0, 0];
-    }
-
+  inferirSaldoTecnico(pontosMandante: number, pontosVisitante: number): [number, number] {
+    if (pontosVisitante === 0) return [0, 0];
     return [-pontosVisitante, +pontosVisitante];
   }
 
