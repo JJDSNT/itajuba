@@ -8,14 +8,12 @@
 </main>
 
 <!-- Splash personalizado com base no estado atual -->
-<ng-container *ngIf="splashState as state">
-  <div class="splash-alternativo">
-    <ng-container [ngSwitch]="state">
-      <p *ngSwitchCase="SplashState.LoadingApp">Inicializando aplicação...</p>
-      <p *ngSwitchCase="SplashState.PreloadingData">Carregando informações do campeonato...</p>
-      <p *ngSwitchCase="SplashState.UpdatingPWA">Nova versão disponível. Recarregando...</p>
-    </ng-container>
-  </div>
-</ng-container>
+<div class="splash-alternativo" *ngIf="splashState as state">
+  <ng-container [ngSwitch]="state">
+    <output *ngSwitchCase="SplashState.LoadingApp" aria-live="polite">Inicializando aplicação...</output>
+    <output *ngSwitchCase="SplashState.PreloadingData" aria-live="polite">Carregando informações do campeonato...</output>
+    <output *ngSwitchCase="SplashState.UpdatingPWA" aria-live="polite">Nova versão disponível. Recarregando...</output>
+  </ng-container>
+</div>
 
 <app-footer />
