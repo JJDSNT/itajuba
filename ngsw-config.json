@@ -7,9 +7,10 @@
       "installMode": "prefetch",
       "resources": {
         "files": [
+          "/favicon.ico",
+          "/index.csr.html",
           "/index.html",
-          "/assets/manifest.webmanifest",
-          "/assets/icons/favicon.ico",
+          "/manifest.webmanifest",
           "/*.css",
           "/*.js"
         ]
@@ -21,8 +22,7 @@
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/assets/icons/**",
-          "/assets/screenshots/**"
+          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
       }
     }
