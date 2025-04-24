@@ -57,11 +57,14 @@ export class AppComponent {
     }
 
     // Início do preload de dados
-    this.splashState = SplashState.PreloadingData;
+    if (this.splashState !== SplashState.UpdatingPWA) {
+      this.splashState = SplashState.PreloadingData;
+    }
+
     this.campeonato.preloadDadosHome().subscribe();
 
-    // Remove splash ao final do preload
     this.preloadFinalizado$.pipe(filter(Boolean), first()).subscribe(() => {
+      if (this.splashState === SplashState.UpdatingPWA) return;
       this.splashState = null;
       const splash = document.getElementById('splash-screen');
       if (splash) {
