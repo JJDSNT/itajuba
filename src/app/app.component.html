@@ -3,6 +3,9 @@
 <!-- Conteúdo principal só aparece após preload -->
 <main class="site-main" *ngIf="!splashState">
   <div class="container">
+    <div *ngIf="(online$ | async) === false" class="offline-banner">
+      ⚠️ Você está offline. Os dados exibidos podem estar desatualizados.
+    </div>
     <router-outlet></router-outlet>
   </div>
 </main>

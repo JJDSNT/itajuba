@@ -1,6 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable, shareReplay, startWith, of, switchMap, BehaviorSubject, tap } from 'rxjs';
+import {
+  map,
+  Observable,
+  shareReplay,
+  startWith,
+  of,
+  switchMap,
+  BehaviorSubject,
+  tap,
+  catchError,
+} from 'rxjs';
 import * as Papa from 'papaparse';
 import {
   ClubeInfo,
@@ -29,7 +39,9 @@ export class CampeonatoService {
   private rodadasCache!: Rodada[];
 
   constructor(private readonly http: HttpClient) {
-    this.csv$ = this.http.get(this.csvUrl, { responseType: 'text' }).pipe(shareReplay(1));
+    this.csv$ = this.http
+      .get(this.csvUrl, { responseType: 'text' })
+      .pipe(shareReplay(1));
 
     this.clubes$ = this.http.get(this.clubesUrl, { responseType: 'text' }).pipe(
       map((csv) => {
@@ -132,7 +144,8 @@ export class CampeonatoService {
 
           const pontosMandanteRaw = row['Pontos Mandante']?.trim();
           const pontosVisitanteRaw = row['Pontos Visitante']?.trim();
-          const encerrada = pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
+          const encerrada =
+            pontosMandanteRaw !== '' && pontosVisitanteRaw !== '';
 
           const pontosMandante = Number(pontosMandanteRaw);
           const pontosVisitante = Number(pontosVisitanteRaw);
@@ -176,7 +189,7 @@ export class CampeonatoService {
         this.getClubes().pipe(
           map((clubes) => {
             const enderecoMap = Object.fromEntries(
-              clubes.map(c => [c.nome.trim(), c.endereco])
+              clubes.map((c) => [c.nome.trim(), c.endereco])
             );
             const enriquecidas = partidas.map((partida) => ({
               ...partida,
@@ -190,7 +203,14 @@ export class CampeonatoService {
       shareReplay(1)
     );
 
-    return cache ? atualiza$.pipe(startWith(cache)) : atualiza$;
+    return cache
+      ? atualiza$.pipe(
+          startWith(cache),
+          catchError(() => of(cache))
+        )
+      : atualiza$.pipe(
+          catchError(() => of(cache ?? [])) 
+        );
   }
 
   getClassificacao(): Observable<ClubeClassificacao[]> {
@@ -249,7 +269,10 @@ export class CampeonatoService {
     );
   }
 
-  inferirSaldoTecnico(pontosMandante: number, pontosVisitante: number): [number, number] {
+  inferirSaldoTecnico(
+    pontosMandante: number,
+    pontosVisitante: number
+  ): [number, number] {
     if (pontosVisitante === 0) return [0, 0];
     return [-pontosVisitante, +pontosVisitante];
   }

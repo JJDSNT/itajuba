@@ -6,6 +6,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { CampeonatoService } from './services/campeonato.service';
 import { CommonModule } from '@angular/common';
+import { NetworkService } from './services/network.service';
 
 enum SplashState {
   LoadingApp = 'loading-app',
@@ -21,6 +22,9 @@ enum SplashState {
   styleUrl: './app.component.css',
 })
 export class AppComponent {
+  private readonly network = inject(NetworkService);
+  online$ = this.network.online$;
+
   title = 'itajuba';
   currentYear = new Date().getFullYear();
 
