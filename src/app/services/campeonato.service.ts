@@ -18,15 +18,24 @@ import {
   ClubeClassificacao,
   Rodada,
 } from '../models/campeonato.model';
+import { environment } from '../../enviroments/enviroments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CampeonatoService {
-  private readonly csvUrl =
-    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&id=1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8&gid=0';
-  private readonly clubesUrl =
-    'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8/export?format=csv&gid=29461594';
+
+  private readonly basePlanilhaUrl = environment.NG_APP_PLANILHA_URL;
+
+  private gerarCsvUrl(gid: string): string {
+    return `${this.basePlanilhaUrl}/export?format=csv&gid=${gid}`;
+  }
+
+  private readonly csvUrl = this.gerarCsvUrl(environment.NG_APP_GIDS.partidas);
+  private readonly clubesUrl = this.gerarCsvUrl(environment.NG_APP_GIDS.clubes);
+  private readonly formulariosUrl = this.gerarCsvUrl(
+    environment.NG_APP_GIDS.formularios
+  );
 
   private readonly csv$: Observable<string>;
   private readonly clubes$: Observable<ClubeInfo[]>;
@@ -208,9 +217,7 @@ export class CampeonatoService {
           startWith(cache),
           catchError(() => of(cache))
         )
-      : atualiza$.pipe(
-          catchError(() => of(cache ?? [])) 
-        );
+      : atualiza$.pipe(catchError(() => of(cache ?? [])));
   }
 
   getClassificacao(): Observable<ClubeClassificacao[]> {
