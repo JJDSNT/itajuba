@@ -1,15 +1,84 @@
 <div class="admin-panel">
   <h1>Administração do Campeonato</h1>
 
-  <div class="actions">
-    <a class="admin-button" [href]="criarCampeonatoUrl" target="_blank"
-      >Criar Campeonato</a
-    >
-    <a class="admin-button" [href]="cadastrarPartidaUrl" target="_blank"
-      >Cadastrar Partida</a
-    >
-    <a class="admin-button" [href]="editarPartidaUrl" target="_blank"
-      >Editar Partida</a
-    >
-  </div>
+  <ng-container *ngIf="urlsValidas; else erroSetup">
+    <div class="actions">
+      <a
+        class="admin-button"
+        [href]="criarCampeonatoUrl"
+        target="_blank"
+        *ngIf="criarCampeonatoUrl"
+      >
+        Criar Campeonato
+      </a>
+
+      <a
+        class="admin-button"
+        [href]="cadastrarPartidaUrl"
+        target="_blank"
+        *ngIf="cadastrarPartidaUrl"
+      >
+        Cadastrar Partida
+      </a>
+
+      <a
+        class="admin-button"
+        [href]="editarPartidaUrl"
+        target="_blank"
+        *ngIf="editarPartidaUrl"
+      >
+        Editar Partida
+      </a>
+    </div>
+  </ng-container>
+
+  <ng-template #erroSetup>
+    <div class="erro-setup">
+      <h2>⚠️ Configuração Inicial Incompleta</h2>
+      <p>
+        O sistema detectou que as variáveis de ambiente necessárias não foram
+        configuradas.
+      </p>
+
+      <h3>Como configurar:</h3>
+      <ol>
+        <li>
+          Acesse o Console de Scripts:
+          <br />
+          <a
+            href="https://script.google.com/"
+            target="_blank"
+            class="admin-button"
+          >
+            Abrir Google Apps Script
+          </a>
+        </li>
+        <li>Abra o projeto de automação do campeonato.</li>
+        <li>
+          Execute a função <code>criarSetupInicial()</code> para gerar a
+          estrutura básica (planilha e formulário).
+        </li>
+        <li>
+          Copie as variáveis de ambiente geradas (URLs de planilha e
+          formulário).
+        </li>
+        <li>
+          Acesse o formulário criado e configure:
+          <ul>
+            <li>Abra o formulário no Google Forms.</li>
+            <li>Clique em ⚙️ Configurações.</li>
+            <li>Ative "Limitar a 1 resposta" para exigir login Google.</li>
+            <li>Se possível, restrinja o acesso apenas ao seu domínio ou email autorizado.</li>
+          </ul>
+        </li>
+        <li>
+          Atualize o arquivo <code>environment.ts</code> no seu projeto Angular
+          com as URLs corretas.
+        </li>
+        <li>Recompile e publique a aplicação.</li>
+      </ol>
+
+      <p>Após configurar, esta tela será atualizada automaticamente.</p>
+    </div>
+  </ng-template>
 </div>

@@ -1,9 +1,5 @@
 export const environment = {
   production: false,
-  NG_APP_PLANILHA_URL: 'https://docs.google.com/spreadsheets/d/1xWApRoSOWaw_mPWIFiSI4jPp26xOpOIeDzfmxD-igA8',
-  NG_APP_GIDS: {
-    partidas: '0',
-    clubes: '29461594',
-    formularios: '12345678'
-  }
+  NG_APP_PLANILHA_MAE_URL: 'https://docs.google.com/spreadsheets/d/ID_PLANILHA/export?format=csv&gid=GID_CAMPEONATOS',
+  NG_APP_FORMULARIO_CAMPEONATO_URL: 'https://docs.google.com/forms/d/e/ID_DO_FORMULARIO/viewform'
 };
