@@ -13,6 +13,8 @@
  * Observações futuras:
  * - Poderíamos adaptar a configuração para permitir 2 ou 3 administradores
  *   (em vez de apenas 1 email, usar uma lista de emails e adicionar todos como editores).
+ * const emailsAutorizados = ['admin1@email.com', 'admin2@email.com'];
+ * emailsAutorizados.forEach(email => arquivoFormulario.addEditor(email));
  */
 function criarSetupInicial() {
   const NOME_PLANILHA_MAE = 'Planilha dos Campeonatos';
