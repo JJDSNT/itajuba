@@ -4,7 +4,7 @@
 <main class="site-main" *ngIf="!splashState">
   <div class="container">
     <div *ngIf="(online$ | async) === false" class="offline-banner">
-      ⚠️ Você está offline. Os dados exibidos podem estar desatualizados.
+      ⚠️ Você está offline.<br /> Os dados exibidos podem estar desatualizados.
     </div>
     <router-outlet></router-outlet>
   </div>
