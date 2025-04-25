@@ -1,0 +1,66 @@
+# 📋 Scripts de Setup e Criação de Campeonatos
+
+Este diretório contém os scripts utilizados para automação da criação e gerenciamento de campeonatos de malha, integrados com Google Sheets e Google Forms.
+
+---
+
+## 🛠 Scripts Disponíveis
+
+### 1. `setup-campeonatos.gs`
+
+Cria toda a infraestrutura inicial do sistema:
+
+- Cria a **Planilha dos Campeonatos** (planilha mãe centralizadora).
+- Cria a aba **Campeonatos** com os seguintes campos:
+  - Nome do Campeonato
+  - Nome Interno (slug)
+  - Data de Início
+  - Data de Término
+  - Observações
+  - Planilha URL
+  - GID Partidas
+  - GID Clubes
+  - GID Formularios
+  - URL Form Criar
+  - URL Form Cadastrar
+  - URL Form Editar
+- Cria um **Formulário Google** que permite:
+  - **Criar**, **Editar** ou **Apagar** campeonatos.
+- Vincula o Formulário diretamente à Planilha Mãe.
+
+✅ Deve ser executado apenas uma vez para configurar o sistema inicial.
+
+---
+
+### 2. `criar-campeonato-dinamico.gs`
+
+Realiza o processamento dinâmico das solicitações feitas através do formulário:
+
+- Lê as respostas da aba de respostas do Google Forms.
+- Para cada solicitação:
+  - Se **ação = Criar**:
+    - Cria uma nova planilha específica para o campeonato.
+    - Cria abas de `Partidas`, `Clubes` e `Formularios`.
+    - Cria formulários específicos para cadastro e edição de partidas.
+    - Atualiza a aba `Campeonatos` da Planilha Mãe com todas as URLs e GIDs.
+  - *(Futuro: poderá ser estendido para ações de Editar e Apagar)*
+
+✅ Pode ser executado quantas vezes forem necessárias, para processar novos campeonatos.
+
+---
+
+## 📢 Observações Importantes
+
+- Ambos os scripts devem ser colocados no **mesmo projeto** no Google Apps Script.
+- Se a Planilha Mãe não for encontrada durante a execução de `criar-campeonato-dinamico.gs`, o sistema tenta criar automaticamente usando `setup-campeonatos.gs`.
+- O formulário de criação é protegido pelo próprio Google Forms, exigindo login e restrição de usuários autorizados.
+
+---
+
+## 🚀 Fluxo Geral
+
+1. Executar `setup-campeonatos.gs` para criar a infraestrutura inicial.
+2. Preencher o formulário para criar campeonatos.
+3. Executar `criar-campeonato-dinamico.gs` para processar novas solicitações e gerar as planilhas de campeonatos.
+
+---
